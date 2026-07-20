@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="街灯を探しながら、少しだけ上を向いて歩く横スクロールサイト。" />
+    <title>上を向いて歩こう</title>
+    <link rel="icon" href="img/top/logo.webp" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js" defer></script>
+  </head>
+  <body id="page-top">
+    <section class="opening" aria-labelledby="opening-title">
+      <div class="opening__sticky">
+        <img class="opening__image" src="img/top/top_01.webp" alt="街灯のそばを歩きながらスマートフォンを見る人" />
+        <div class="opening__copy">
+          <img id="opening-title" src="img/top/logo.webp" alt="上を向いて歩こう" />
+          <p>いつもの道を、少し違う目線で。</p>
+        </div>
+      </div>
+    </section>
+
+    <main class="horizontal" aria-label="街灯をめぐる横スクロールコンテンツ">
+      <div class="horizontal__sticky">
+        <a class="walking-logo" href="#page-top" aria-label="トップ画面へ戻る">
+          <img src="img/top/logo.webp" alt="上を向いて歩こう" />
+        </a>
+
+        <div class="track" id="track">
+          <section class="journey">
+            <div class="sky"></div><div class="ground"></div>
+            <img class="cloud cloud--1" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--2" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--3" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--4" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--5" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--6" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--7" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--8" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--9" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--10" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--11" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--12" src="img/top/cloud.webp" alt="" />
+            <img class="cloud cloud--13" src="img/top/cloud.webp" alt="" />
+
+            <section class="scene scene--intro">
+              <p>普段、スマホばかり見ながら歩いていませんか？<br />少しだけ視線を上げてみると、いつもの道にも意外な発見があります。</p>
+              <p>そのひとつが「街灯」。<br />丸いものや細長いもの、レトロなものなど、一つひとつ違った表情をしています。</p>
+              <p>今日は少しだけ、上を向いて歩いてみませんか？</p>
+            </section>
+
+            <div class="streetlight-stage streetlight-stage--1" aria-hidden="true">
+              <img class="stage-building stage-building--main" src="img/walking/streetlight_01/building.webp" alt="" />
+              <img class="stage-shop stage-shop--1" src="img/walking/streetlight_01/shop_01.webp" alt="" />
+              <img class="stage-shop stage-shop--2" src="img/walking/streetlight_01/shop_02.webp" alt="" />
+              <img class="stage-sign stage-sign--1" src="img/walking/streetlight_01/sign_01.webp" alt="" />
+              <img class="stage-sign stage-sign--2" src="img/walking/streetlight_01/sign_02.webp" alt="" />
+              <img class="stage-sign stage-sign--3" src="img/walking/streetlight_01/sign_01.webp" alt="" />
+              <img class="stage-sign stage-sign--4" src="img/walking/streetlight_01/sign_02.webp" alt="" />
+              <img class="stage-cone stage-cone--1" src="img/walking/streetlight_01/colorcone_01.webp" alt="" />
+              <img class="stage-cone stage-cone--2" src="img/walking/streetlight_01/colorcone_01.webp" alt="" />
+            </div>
+
+            <div class="streetlight-stage streetlight-stage--2" aria-hidden="true">
+              <img class="stage-02-layer stage-02-building" src="img/walking/streetlight_02/building.webp" alt="" />
+              <img class="stage-02-layer stage-02-redgate" src="img/walking/streetlight_02/redgate.webp" alt="" />
+              <img class="stage-02-layer stage-02-tree-01" src="img/walking/streetlight_02/tree_01.webp" alt="" />
+              <img class="stage-02-layer stage-02-tree-02" src="img/walking/streetlight_02/tree_02.webp" alt="" />
+              <img class="stage-02-layer stage-02-pole" src="img/walking/streetlight_02/pole_01.webp" alt="" />
+              <img class="stage-02-layer stage-02-clock" src="img/walking/streetlight_02/clock.webp" alt="" />
+              <img class="stage-02-layer stage-02-cone" src="img/walking/streetlight_02/cone_01.webp" alt="" />
+            </div>
+
+            <div class="streetlight-stage streetlight-stage--3" aria-hidden="true">
+              <img class="stage-03-layer stage-03-guardrail" src="img/walking/streetlight_03/guardrail.webp" alt="" />
+              <img class="stage-03-layer stage-03-tree-01" src="img/walking/streetlight_03/tree_01.webp" alt="" />
+              <img class="stage-03-layer stage-03-tree-02" src="img/walking/streetlight_03/tree_02.webp" alt="" />
+              <img class="stage-03-layer stage-03-call" src="img/walking/streetlight_03/call.webp" alt="" />
+            </div>
+
+            <div class="streetlight-stage streetlight-stage--4" aria-hidden="true">
+              <img class="stage-04-layer stage-04-torii" src="img/walking/streetlight_04/torii.webp" alt="" />
+              <img class="stage-04-layer stage-04-tree" src="img/walking/streetlight_04/tree.webp" alt="" />
+              <img class="stage-04-layer stage-04-bicycle-01" src="img/walking/streetlight_04/bicycle_01.webp" alt="" />
+              <img class="stage-04-layer stage-04-bicycle-02" src="img/walking/streetlight_04/bicycle_02.webp" alt="" />
+            </div>
+
+            <div class="streetlight-stage streetlight-stage--5" aria-hidden="true">
+              <img class="stage-05-layer stage-05-building-01" src="img/walking/streetlight_05/building_01.webp" alt="" />
+              <img class="stage-05-layer stage-05-building-02" src="img/walking/streetlight_05/building_02.webp" alt="" />
+              <img class="stage-05-layer stage-05-building-03" src="img/walking/streetlight_05/building_03.webp" alt="" />
+              <img class="stage-05-layer stage-05-signboard" src="img/walking/streetlight_05/signboard.webp" alt="" />
+              <img class="stage-05-layer stage-05-bicycle-01" src="img/walking/streetlight_05/bicycle_01.webp" alt="" />
+              <img class="stage-05-layer stage-05-bicycle-02" src="img/walking/streetlight_05/bicycle_02.webp" alt="" />
+            </div>
+
+            <section class="scene scene--finish">
+              <p>ここまでご覧いただき、ありがとうございました。<br />街灯には、それぞれ違った形や雰囲気があり、街の景色をさりげなく彩っています。</p>
+              <p>このサイトをきっかけに、歩くときに少しだけ上を向く習慣が生まれたら嬉しいです。</p>
+            </section>
+          </section>
+        </div>
+
+        <a class="lamp lamp--1" href="detail/streetlight_01/streetlight_01.html" aria-label="街灯1の詳細を見る">
+          <img class="lamp__image lamp__image--off" src="img/walking/streetlight_01/streetlight_01.webp" alt="" />
+          <img class="lamp__image lamp__image--on" src="img/walking/streetlight_01/streetlight_glow_01.webp" alt="" />
+        </a>
+
+        <div class="lamp lamp--2" data-focus-x="0.29" data-alpha-hit data-hit-padding="30" aria-hidden="true">
+          <img class="lamp__image lamp__image--off" src="img/walking/streetlight_02/streetlight_02.webp" alt="" />
+          <img class="lamp__image lamp__image--on" src="img/walking/streetlight_02/streetlight_glow_02.webp" alt="" />
+        </div>
+
+        <div class="lamp lamp--3" data-focus-x="0.33" data-alpha-hit data-hit-padding="30" aria-hidden="true">
+          <img class="lamp__image lamp__image--off" src="img/walking/streetlight_03/streetlight_03.webp" alt="" />
+          <img class="lamp__image lamp__image--on" src="img/walking/streetlight_03/streetlight_glow_03.webp" alt="" />
+        </div>
+
+        <div class="lamp lamp--4" data-focus-x="0.56" data-alpha-hit data-hit-padding="30" aria-hidden="true">
+          <img class="lamp__image lamp__image--off" src="img/walking/streetlight_04/streetlight_04.webp" alt="" />
+          <img class="lamp__image lamp__image--on" src="img/walking/streetlight_04/streetlight_glow_04.webp" alt="" />
+        </div>
+
+        <div class="lamp lamp--5" data-focus-x="0.56" data-alpha-hit data-hit-padding="30" aria-hidden="true">
+          <img class="lamp__image lamp__image--off" src="img/walking/streetlight_05/streetlight_05.webp" alt="" />
+          <img class="lamp__image lamp__image--on" src="img/walking/streetlight_05/streetlight_glow_05.webp" alt="" />
+        </div>
+
+        <div class="walker" id="walker" aria-hidden="true">
+          <img class="walker__pose walker__pose--phone walker__pose--1" src="img/walking/walking_phone_01.webp" alt="" />
+          <img class="walker__pose walker__pose--phone walker__pose--2" src="img/walking/walking_phone_02.webp" alt="" />
+          <img class="walker__pose walker__pose--front walker__pose--1" src="img/walking/walking_front_01.webp" alt="" />
+          <img class="walker__pose walker__pose--front walker__pose--2" src="img/walking/walking_front_02.webp" alt="" />
+          <img class="walker__pose walker__pose--up walker__pose--1" src="img/walking/walking_up_01.webp" alt="" />
+          <img class="walker__pose walker__pose--up walker__pose--2" src="img/walking/walking_up_02.webp" alt="" />
+        </div>
+      </div>
+    </main>
+
+    <nav class="corner-nav" aria-label="ページ内ナビゲーション">
+      <button class="corner-nav__top" type="button" id="topButton">Top</button>
+      <span class="corner-nav__line">
+        <button class="corner-nav__dot" type="button" data-lamp-index="1" aria-label="街灯1へ移動"></button>
+        <button class="corner-nav__dot" type="button" data-lamp-index="2" aria-label="街灯2へ移動"></button>
+        <button class="corner-nav__dot" type="button" data-lamp-index="3" aria-label="街灯3へ移動"></button>
+        <button class="corner-nav__dot" type="button" data-lamp-index="4" aria-label="街灯4へ移動"></button>
+        <button class="corner-nav__dot" type="button" data-lamp-index="5" aria-label="街灯5へ移動"></button>
+      </span>
+    </nav>
+  </body>
+</html>

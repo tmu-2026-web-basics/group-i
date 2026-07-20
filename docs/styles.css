@@ -1,0 +1,849 @@
+:root {
+  --sky: #88e4df;
+  --ground: #fffcee;
+  --ink: #5d423c;
+  --panel-x: 100vw;
+  --track-x: 0px;
+  --walker-bob: 0px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--ground);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  overscroll-behavior: none;
+}
+
+img {
+  display: block;
+}
+
+/* ------------------------------
+   トップ画面
+------------------------------ */
+
+.opening {
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  height: 100vh;
+}
+
+.opening__sticky {
+  position: relative;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  background: #dff4f8;
+}
+
+.opening__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.opening__sticky::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 48%,
+    rgba(222, 246, 249, 0.12) 65%,
+    rgba(222, 246, 249, 0.3)
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.opening__copy {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: clamp(34px, 7vw, 120px);
+  width: min(26vw, 390px);
+  text-align: center;
+  transform: translateY(-50%);
+}
+
+.opening__copy p {
+  margin: 1.2em 0 0;
+  font-family: "Zen Maru Gothic", sans-serif;
+  font-size: clamp(14px, 1.25vw, 19px);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.opening__copy img {
+  width: 100%;
+  mix-blend-mode: multiply;
+}
+
+/* ------------------------------
+   右から現れる横スクロール画面
+------------------------------ */
+
+.horizontal {
+  position: relative;
+  z-index: 10;
+  height: 900vh;
+}
+
+.horizontal__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--sky);
+  box-shadow: -14px 0 40px rgba(93, 66, 60, 0.14);
+  transform: translate3d(var(--panel-x), 0, 0);
+  will-change: transform;
+}
+
+.walking-logo {
+  position: absolute;
+  z-index: 60;
+  top: 24px;
+  left: 28px;
+  width: clamp(120px, 12vw, 190px);
+  border-radius: 4px;
+  transition: opacity 180ms ease;
+}
+
+.walking-logo:hover {
+  opacity: 0.72;
+}
+
+.walking-logo:focus-visible {
+  outline: 3px solid var(--ground);
+  outline-offset: 5px;
+}
+
+.walking-logo img {
+  width: 100%;
+  height: auto;
+}
+
+.track {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: max-content;
+  transform: translate3d(var(--track-x), 0, 0);
+  will-change: transform;
+}
+
+.journey {
+  position: relative;
+  width: 1510vh;
+  min-width: 12200px;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.sky,
+.ground {
+  position: absolute;
+  inset-inline: 0;
+}
+
+.sky {
+  top: 0;
+  height: 80%;
+  background: var(--sky);
+}
+
+.ground {
+  bottom: 0;
+  height: 20%;
+  background: var(--ground);
+}
+
+/* ------------------------------
+   雲
+------------------------------ */
+
+.cloud {
+  position: absolute;
+  z-index: 1;
+  width: 18vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.cloud--1 {
+  top: 17vh;
+  left: 15vh;
+}
+
+.cloud--2 {
+  top: 9vh;
+  left: 122vh;
+  transform: scale(0.72);
+}
+
+.cloud--3 {
+  top: 18vh;
+  left: 258vh;
+  transform: scale(0.66);
+}
+
+.cloud--4 {
+  top: 11vh;
+  left: 394vh;
+  transform: scale(0.76);
+}
+
+.cloud--5 {
+  top: 15vh;
+  left: 462vh;
+  transform: scale(0.64);
+}
+
+.cloud--6 {
+  top: 10vh;
+  left: 525vh;
+  transform: scale(0.82);
+}
+
+.cloud--7 {
+  top: 17vh;
+  left: 650vh;
+  transform: scale(0.7);
+}
+
+.cloud--8 {
+  top: 9vh;
+  left: 770vh;
+  transform: scale(0.84);
+}
+
+.cloud--9 {
+  top: 16vh;
+  left: 900vh;
+  transform: scale(0.68);
+}
+
+.cloud--10 {
+  top: 10vh;
+  left: 1050vh;
+  transform: scale(0.8);
+}
+
+.cloud--11 {
+  top: 17vh;
+  left: 1165vh;
+  transform: scale(0.68);
+}
+
+.cloud--12 {
+  top: 9vh;
+  left: 1280vh;
+  transform: scale(0.82);
+}
+
+.cloud--13 {
+  top: 16vh;
+  left: 1390vh;
+  transform: scale(0.72);
+}
+
+/* ------------------------------
+   テキスト
+------------------------------ */
+
+.scene {
+  position: absolute;
+  z-index: 30;
+}
+
+.scene--intro {
+  top: 30vh;
+  left: 64vw;
+  width: min(34vw, 66vh);
+  font-size: clamp(13px, 1.58vh, 17px);
+  font-weight: 900;
+  line-height: 2;
+}
+
+.scene--intro p + p,
+.scene--finish p + p {
+  margin-top: 1.35em;
+}
+
+.scene--finish {
+  top: 31vh;
+  left: 1430vh;
+  width: 53vh;
+  font-size: clamp(13px, 1.9vh, 20px);
+  font-weight: 900;
+  line-height: 2;
+}
+
+/* ------------------------------
+   1個目の街灯まわり
+------------------------------ */
+
+.streetlight-stage {
+  position: absolute;
+  z-index: 12;
+  bottom: 18vh;
+  left: 287vh;
+  width: 118vh;
+  height: 66vh;
+  pointer-events: none;
+}
+
+.streetlight-stage img {
+  position: absolute;
+  bottom: 0;
+  width: auto;
+  object-fit: contain;
+}
+
+.stage-building {
+  z-index: 1;
+  bottom: 2vh !important;
+  width: 160vh !important;
+  height: auto;
+}
+
+.stage-building--main {
+  left: calc(10vh - 42px);
+}
+
+.stage-shop {
+  z-index: 2;
+  height: 53vh;
+}
+
+.stage-shop--1 {
+  left: 27vh;
+}
+
+.stage-shop--2 {
+  left: 55vh;
+  height: 55vh;
+}
+
+.stage-sign {
+  z-index: 3;
+  height: 37vh;
+}
+
+.stage-sign--1 {
+  left: calc(10vh - 24px);
+}
+
+.stage-sign--2 {
+  left: calc(20vh - 24px);
+  height: 41vh;
+}
+
+.stage-sign--3 {
+  right: 13vh;
+}
+
+.stage-sign--4 {
+  right: 2vh;
+  height: 40vh;
+}
+
+.stage-cone {
+  z-index: 4;
+  height: 8vh;
+}
+
+.stage-cone--1 {
+  left: 23vh;
+}
+
+.stage-cone--2 {
+  right: 22vh;
+}
+
+/* ------------------------------
+   2個目の街灯まわり
+------------------------------ */
+
+.streetlight-stage--2 {
+  bottom: 45px;
+  left: calc(410vh + 240px);
+  width: 200vh;
+  height: 100vh;
+}
+
+.streetlight-stage--2 .stage-02-layer {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.stage-02-building {
+  z-index: 1;
+}
+
+.stage-02-redgate {
+  z-index: 2;
+}
+
+.stage-02-tree-01,
+.stage-02-tree-02 {
+  z-index: 3;
+}
+
+.stage-02-pole {
+  z-index: 4;
+}
+
+.stage-02-clock {
+  z-index: 5;
+}
+
+.stage-02-cone {
+  z-index: 6;
+}
+
+/* ------------------------------
+   3個目の街灯まわり
+------------------------------ */
+
+.streetlight-stage--3 {
+  bottom: 45px;
+  left: calc(610vh + 480px);
+  width: 200vh;
+  height: 100vh;
+}
+
+.streetlight-stage--3 .stage-03-layer {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.stage-03-guardrail {
+  z-index: 1;
+}
+
+.stage-03-tree-01,
+.stage-03-tree-02 {
+  z-index: 2;
+}
+
+.stage-03-call {
+  z-index: 3;
+}
+
+/* ------------------------------
+   4・5個目の街灯まわり
+------------------------------ */
+
+.streetlight-stage--4,
+.streetlight-stage--5 {
+  bottom: 45px;
+  width: 200vh;
+  height: 100vh;
+}
+
+.streetlight-stage--4 {
+  left: calc(810vh + 720px);
+}
+
+.streetlight-stage--5 {
+  left: calc(1010vh + 960px);
+}
+
+.streetlight-stage--4 .stage-04-layer,
+.streetlight-stage--5 .stage-05-layer {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.stage-04-torii,
+.stage-05-building-01 {
+  z-index: 1;
+}
+
+.stage-04-tree,
+.stage-05-building-02 {
+  z-index: 2;
+}
+
+.stage-04-bicycle-01,
+.stage-05-building-03 {
+  z-index: 3;
+}
+
+.stage-04-bicycle-02,
+.stage-05-signboard {
+  z-index: 4;
+}
+
+.stage-05-bicycle-01 {
+  z-index: 5;
+}
+
+.stage-05-bicycle-02 {
+  z-index: 6;
+}
+
+/* ------------------------------
+   街灯
+------------------------------ */
+
+.lamp {
+  position: absolute;
+  z-index: 20;
+  bottom: 18vh;
+  height: 62vh;
+  aspect-ratio: 528 / 1390;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.lamp img {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transition: opacity 0.3s ease;
+}
+
+.lamp__image--on {
+  z-index: 2 !important;
+  opacity: 0;
+  transform: translateX(15px);
+}
+
+.lamp:focus-visible {
+  outline: none;
+}
+
+.lamp:hover .lamp__image--off,
+.lamp:focus-visible .lamp__image--off,
+.lamp.is-alpha-hovered .lamp__image--off {
+  opacity: 0;
+}
+
+.lamp:hover .lamp__image--on,
+.lamp:focus-visible .lamp__image--on,
+.lamp.is-alpha-hovered .lamp__image--on {
+  opacity: 1;
+}
+
+.lamp--1 {
+  z-index: 45;
+  bottom: calc(18vh - 92px);
+  left: calc(337vh - 35px);
+  height: 88vh;
+  transform: translate3d(var(--track-x), 0, 0);
+  will-change: transform;
+}
+
+.lamp--2 {
+  z-index: 45;
+  bottom: -30px;
+  left: calc(410vh + 240px);
+  width: 200vh;
+  height: 100vh;
+  aspect-ratio: 2 / 1;
+  pointer-events: none;
+  cursor: default;
+  transform: translate3d(var(--track-x), 0, 0);
+  will-change: transform;
+}
+
+.lamp--2 .lamp__image--on {
+  transform: none;
+}
+
+.lamp--3 {
+  z-index: 45;
+  bottom: -30px;
+  left: calc(610vh + 420px);
+  width: 200vh;
+  height: 100vh;
+  aspect-ratio: 2 / 1;
+  pointer-events: none;
+  cursor: default;
+  transform: translate3d(var(--track-x), 0, 0);
+  will-change: transform;
+}
+
+.lamp--3 .lamp__image {
+  transform: scale(1.15);
+  transform-origin: 33% bottom;
+}
+
+.lamp--4,
+.lamp--5 {
+  z-index: 45;
+  bottom: -30px;
+  width: 200vh;
+  height: 100vh;
+  aspect-ratio: 2 / 1;
+  pointer-events: none;
+  cursor: default;
+  transform: translate3d(var(--track-x), 0, 0);
+  will-change: transform;
+}
+
+.lamp--4 {
+  left: calc(810vh + 720px);
+}
+
+.lamp--5 {
+  left: calc(1010vh + 960px);
+}
+
+.lamp--4 .lamp__image--on,
+.lamp--5 .lamp__image--on {
+  transform: none;
+}
+
+/* ------------------------------
+   歩く人物
+------------------------------ */
+
+.walker {
+  position: absolute;
+  z-index: 40;
+  pointer-events: none;
+  left: clamp(70px, 19vw, 300px);
+  bottom: 13vh;
+  width: clamp(165px, 26vh, 270px);
+  height: 41vh;
+  filter: drop-shadow(0 10px 8px rgba(93, 66, 60, 0.12));
+  pointer-events: none;
+  transform: translateY(var(--walker-bob));
+}
+
+.walker__pose {
+  position: absolute;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateY(4%);
+}
+
+.walker.is-walking-backward .walker__pose {
+  transform: translateY(4%) scaleX(-1);
+}
+
+.walker:not(.has-passed-intro):not(.is-looking-up)
+  .walker__pose--phone.walker__pose--1 {
+  display: block;
+}
+
+.walker:not(.has-passed-intro):not(.is-looking-up).is-step-two
+  .walker__pose--phone.walker__pose--1 {
+  display: none;
+}
+
+.walker:not(.has-passed-intro):not(.is-looking-up).is-step-two
+  .walker__pose--phone.walker__pose--2 {
+  display: block;
+}
+
+.walker.has-passed-intro:not(.is-looking-up)
+  .walker__pose--front.walker__pose--1 {
+  display: block;
+}
+
+.walker.has-passed-intro:not(.is-looking-up).is-step-two
+  .walker__pose--front.walker__pose--1 {
+  display: none;
+}
+
+.walker.has-passed-intro:not(.is-looking-up).is-step-two
+  .walker__pose--front.walker__pose--2 {
+  display: block;
+}
+
+.walker.is-looking-up .walker__pose--up.walker__pose--1 {
+  display: block;
+}
+
+.walker.is-looking-up.is-step-two .walker__pose--up.walker__pose--1 {
+  display: none;
+}
+
+.walker.is-looking-up.is-step-two .walker__pose--up.walker__pose--2 {
+  display: block;
+}
+
+/* ------------------------------
+   右下のナビゲーション
+------------------------------ */
+
+.corner-nav {
+  position: fixed;
+  z-index: 4000;
+  right: 18px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  width: min(36vw, 380px);
+  filter: drop-shadow(0 5px 9px rgba(93, 66, 60, 0.14));
+}
+
+.corner-nav__top {
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--ground);
+  background: var(--ink);
+  font-family: "Zen Maru Gothic", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.corner-nav__line {
+  position: relative;
+  display: flex;
+  flex: 1;
+  height: 32px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.corner-nav__line::before {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  right: 14px;
+  left: 14px;
+  height: 2px;
+  background: rgba(93, 66, 60, 0.72);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.corner-nav__dot {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  place-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.corner-nav__dot::before {
+  display: block;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--ink);
+  content: "";
+  transition: transform 160ms ease;
+}
+
+.corner-nav__dot:hover::before,
+.corner-nav__dot:focus-visible::before {
+  transform: scale(1.55);
+}
+
+.corner-nav__dot:focus-visible,
+.corner-nav__top:focus-visible {
+  outline: 3px solid var(--ground);
+  outline-offset: 2px;
+}
+
+/* ------------------------------
+   スマートフォン表示
+------------------------------ */
+
+@media (max-width: 720px) {
+  .opening__image {
+    object-position: 46% center;
+  }
+
+  .opening__sticky::after {
+    background: linear-gradient(
+      0deg,
+      rgba(222, 246, 249, 0.5),
+      transparent 55%
+    );
+  }
+
+  .opening__copy {
+    top: auto;
+    right: 7vw;
+    bottom: 10vh;
+    width: 49vw;
+    transform: none;
+  }
+
+  .opening__copy p {
+    font-size: 12px;
+    letter-spacing: 0.1em;
+  }
+
+  .walker {
+    left: 3vw;
+    bottom: 16vh;
+    width: 18vh;
+    height: 31vh;
+  }
+
+  .walking-logo {
+    top: 16px;
+    left: 16px;
+    width: 108px;
+  }
+
+  .corner-nav {
+    right: 10px;
+    bottom: 10px;
+    width: min(78vw, 350px);
+  }
+
+  .corner-nav__top {
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+    font-size: 16px;
+  }
+
+  .corner-nav__dot {
+    flex-basis: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* OSで動きを減らす設定が有効な場合 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
