@@ -2,6 +2,7 @@
   --sky: #88e4df;
   --ground: #fffcee;
   --ink: #5d423c;
+  --accent: #e8cd66;
   --panel-x: 100vw;
   --track-x: 0px;
   --walker-bob: 0px;
@@ -21,6 +22,11 @@ body {
   color: var(--ink);
   font-family: "Zen Kaku Gothic New", sans-serif;
   overscroll-behavior: none;
+}
+
+html.is-clickable-lamp-hovered,
+html.is-clickable-lamp-hovered body {
+  cursor: pointer;
 }
 
 img {
@@ -145,8 +151,8 @@ img {
 
 .journey {
   position: relative;
-  width: 1510vh;
-  min-width: 12200px;
+  width: 2010vh;
+  min-width: 16200px;
   height: 100vh;
   min-height: 560px;
   overflow: hidden;
@@ -168,6 +174,20 @@ img {
   bottom: 0;
   height: 20%;
   background: var(--ground);
+}
+
+.building-repeat {
+  position: absolute;
+  z-index: 1;
+  right: 200vh;
+  bottom: 20vh;
+  left: calc(297vh - 42px);
+  height: 20vh;
+  pointer-events: none;
+  background-image: url("img/top/building.webp");
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  background-size: 160vh auto;
 }
 
 /* ------------------------------
@@ -259,6 +279,30 @@ img {
   transform: scale(0.72);
 }
 
+.cloud--14 {
+  top: 10vh;
+  left: 1510vh;
+  transform: scale(0.8);
+}
+
+.cloud--15 {
+  top: 17vh;
+  left: 1635vh;
+  transform: scale(0.68);
+}
+
+.cloud--16 {
+  top: 9vh;
+  left: 1760vh;
+  transform: scale(0.84);
+}
+
+.cloud--17 {
+  top: 16vh;
+  left: 1885vh;
+  transform: scale(0.7);
+}
+
 /* ------------------------------
    テキスト
 ------------------------------ */
@@ -271,8 +315,8 @@ img {
 .scene--intro {
   top: 30vh;
   left: 64vw;
-  width: min(34vw, 66vh);
-  font-size: clamp(13px, 1.58vh, 17px);
+  width: min(36vw, 70vh);
+  font-size: clamp(13px, 1.9vh, 20px);
   font-weight: 900;
   line-height: 2;
 }
@@ -284,7 +328,7 @@ img {
 
 .scene--finish {
   top: 31vh;
-  left: 1430vh;
+  left: 1930vh;
   width: 53vh;
   font-size: clamp(13px, 1.9vh, 20px);
   font-weight: 900;
@@ -310,17 +354,6 @@ img {
   bottom: 0;
   width: auto;
   object-fit: contain;
-}
-
-.stage-building {
-  z-index: 1;
-  bottom: 2vh !important;
-  width: 160vh !important;
-  height: auto;
-}
-
-.stage-building--main {
-  left: calc(10vh - 42px);
 }
 
 .stage-shop {
@@ -503,6 +536,76 @@ img {
 }
 
 /* ------------------------------
+   6・7個目の街灯まわり
+------------------------------ */
+
+.streetlight-stage--6,
+.streetlight-stage--7 {
+  bottom: 45px;
+  width: 200vh;
+  height: 100vh;
+}
+
+.streetlight-stage--6 {
+  left: calc(1210vh + 1200px);
+}
+
+.streetlight-stage--7 {
+  left: calc(1410vh + 1440px);
+}
+
+.streetlight-stage--6 .stage-06-layer,
+.streetlight-stage--7 .stage-07-layer {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.stage-06-tree,
+.stage-07-building {
+  z-index: 1;
+}
+
+.stage-06-guard-01,
+.stage-07-bush-01 {
+  z-index: 2;
+}
+
+.stage-06-guard-02,
+.stage-07-bush-02 {
+  z-index: 3;
+}
+
+.stage-06-guard-03,
+.stage-07-guard {
+  z-index: 4;
+}
+
+.stage-06-signboard,
+.stage-07-signboard-01 {
+  z-index: 5;
+}
+
+.stage-06-mirror,
+.stage-07-signboard-02 {
+  z-index: 6;
+}
+
+.stage-06-box,
+.stage-07-signboard-03 {
+  z-index: 7;
+}
+
+.stage-07-signboard-04 {
+  z-index: 8;
+}
+
+.stage-07-cone {
+  z-index: 9;
+}
+
+/* ------------------------------
    街灯
 ------------------------------ */
 
@@ -613,6 +716,7 @@ img {
 
 .lamp--5 {
   left: calc(1010vh + 960px);
+  bottom: -10px;
 }
 
 .lamp--4 .lamp__image--on,
@@ -620,21 +724,53 @@ img {
   transform: none;
 }
 
+.lamp--6,
+.lamp--7 {
+  z-index: 45;
+  bottom: -10px;
+  width: 200vh;
+  height: 100vh;
+  aspect-ratio: 2 / 1;
+  pointer-events: none;
+  cursor: default;
+  transform: translate3d(var(--track-x), 0, 0);
+  will-change: transform;
+}
+
+.lamp--6 {
+  left: calc(1210vh + 1200px);
+}
+
+.lamp--7 {
+  left: calc(1410vh + 1440px);
+}
+
+.lamp--6 .lamp__image,
+.lamp--7 .lamp__image {
+  transform: scale(1.1);
+  transform-origin: 56% bottom;
+}
+
 /* ------------------------------
    歩く人物
 ------------------------------ */
 
 .walker {
+  --walker-side-offset: clamp(70px, 19vw, 300px);
+
   position: absolute;
   z-index: 40;
   pointer-events: none;
-  left: clamp(70px, 19vw, 300px);
+  right: auto;
+  left: var(--walker-side-offset);
   bottom: 13vh;
   width: clamp(165px, 26vh, 270px);
   height: 41vh;
   filter: drop-shadow(0 10px 8px rgba(93, 66, 60, 0.12));
   pointer-events: none;
-  transform: translateY(var(--walker-bob));
+  transform: translate3d(0, 0, 0);
+  transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
 }
 
 .walker__pose {
@@ -645,53 +781,25 @@ img {
   height: 100%;
   object-fit: contain;
   object-position: center bottom;
-  transform: translateY(4%);
+  transform: translateY(calc(4% + var(--walker-bob)));
+}
+
+.walker__pose.is-active {
+  display: block;
 }
 
 .walker.is-walking-backward .walker__pose {
-  transform: translateY(4%) scaleX(-1);
+  transform: translateY(calc(4% + var(--walker-bob))) scaleX(-1);
 }
 
-.walker:not(.has-passed-intro):not(.is-looking-up)
-  .walker__pose--phone.walker__pose--1 {
-  display: block;
-}
-
-.walker:not(.has-passed-intro):not(.is-looking-up).is-step-two
-  .walker__pose--phone.walker__pose--1 {
-  display: none;
-}
-
-.walker:not(.has-passed-intro):not(.is-looking-up).is-step-two
-  .walker__pose--phone.walker__pose--2 {
-  display: block;
-}
-
-.walker.has-passed-intro:not(.is-looking-up)
-  .walker__pose--front.walker__pose--1 {
-  display: block;
-}
-
-.walker.has-passed-intro:not(.is-looking-up).is-step-two
-  .walker__pose--front.walker__pose--1 {
-  display: none;
-}
-
-.walker.has-passed-intro:not(.is-looking-up).is-step-two
-  .walker__pose--front.walker__pose--2 {
-  display: block;
-}
-
-.walker.is-looking-up .walker__pose--up.walker__pose--1 {
-  display: block;
-}
-
-.walker.is-looking-up.is-step-two .walker__pose--up.walker__pose--1 {
-  display: none;
-}
-
-.walker.is-looking-up.is-step-two .walker__pose--up.walker__pose--2 {
-  display: block;
+.walker.is-walking-backward {
+  transform: translate3d(
+    calc(
+      100vw - var(--walker-side-offset) - var(--walker-side-offset) - 100%
+    ),
+    0,
+    0
+  );
 }
 
 /* ------------------------------
@@ -705,7 +813,7 @@ img {
   bottom: 16px;
   display: flex;
   align-items: center;
-  width: min(36vw, 380px);
+  width: min(calc(44vw + 14px), 474px);
   filter: drop-shadow(0 5px 9px rgba(93, 66, 60, 0.14));
 }
 
@@ -721,6 +829,20 @@ img {
   font-size: 18px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.corner-nav__top.is-active {
+  color: var(--ink);
+  background: var(--accent);
+  box-shadow:
+    0 0 0 3px var(--ground),
+    0 0 0 5px var(--ink);
+  transform: scale(1.08);
 }
 
 .corner-nav__line {
@@ -728,6 +850,7 @@ img {
   display: flex;
   flex: 1;
   height: 32px;
+  margin-left: 14px;
   align-items: center;
   justify-content: space-between;
 }
@@ -764,7 +887,18 @@ img {
   border-radius: 50%;
   background: var(--ink);
   content: "";
-  transition: transform 160ms ease;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.corner-nav__dot.is-active::before {
+  background: var(--accent);
+  box-shadow:
+    0 0 0 3px var(--ground),
+    0 0 0 5px var(--ink);
+  transform: scale(1.55);
 }
 
 .corner-nav__dot:hover::before,
@@ -778,72 +912,13 @@ img {
   outline-offset: 2px;
 }
 
-/* ------------------------------
-   スマートフォン表示
------------------------------- */
-
-@media (max-width: 720px) {
-  .opening__image {
-    object-position: 46% center;
-  }
-
-  .opening__sticky::after {
-    background: linear-gradient(
-      0deg,
-      rgba(222, 246, 249, 0.5),
-      transparent 55%
-    );
-  }
-
-  .opening__copy {
-    top: auto;
-    right: 7vw;
-    bottom: 10vh;
-    width: 49vw;
-    transform: none;
-  }
-
-  .opening__copy p {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-  }
-
-  .walker {
-    left: 3vw;
-    bottom: 16vh;
-    width: 18vh;
-    height: 31vh;
-  }
-
-  .walking-logo {
-    top: 16px;
-    left: 16px;
-    width: 108px;
-  }
-
-  .corner-nav {
-    right: 10px;
-    bottom: 10px;
-    width: min(78vw, 350px);
-  }
-
-  .corner-nav__top {
-    flex-basis: 42px;
-    width: 42px;
-    height: 42px;
-    font-size: 16px;
-  }
-
-  .corner-nav__dot {
-    flex-basis: 24px;
-    width: 24px;
-    height: 24px;
-  }
-}
-
 /* OSで動きを減らす設定が有効な場合 */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .walker {
+    transition: none;
   }
 }

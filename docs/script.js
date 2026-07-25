@@ -7,9 +7,12 @@ const lamps = [...document.querySelectorAll(".lamp")];
 const alphaHitLamps = lamps.filter((lamp) => lamp.hasAttribute("data-alpha-hit"));
 const phoneImages = [...document.querySelectorAll(".walker__pose--phone")];
 const frontImages = [...document.querySelectorAll(".walker__pose--front")];
-const walkingImages = [...phoneImages, ...frontImages];
+const upImages = [...document.querySelectorAll(".walker__pose--up")];
+const walkingImages = [...phoneImages, ...frontImages, ...upImages];
 const topButton = document.querySelector("#topButton");
 const lampNavButtons = [...document.querySelectorAll("[data-lamp-index]")];
+const WALK_FRAME_COUNT = 4;
+const WALK_CYCLE_COUNT = 9;
 
 const imageMasks = new Map();
 let pointerX = -1;
@@ -103,11 +106,18 @@ function isColoredPixel(lamp, clientX, clientY) {
 
 function updateAlphaHover() {
   const hasPointer = pointerX >= 0 && pointerY >= 0;
+  let isClickableLampHovered = false;
 
   alphaHitLamps.forEach((lamp) => {
     const isHovered = hasPointer && isColoredPixel(lamp, pointerX, pointerY);
     lamp.classList.toggle("is-alpha-hovered", isHovered);
+
+    if (isHovered && lamp.dataset.detailUrl) {
+      isClickableLampHovered = true;
+    }
   });
+
+  root.classList.toggle("is-clickable-lamp-hovered", isClickableLampHovered);
 }
 
 function getWalkerImageGeometry(walkingImage, walkingMask) {
@@ -217,7 +227,8 @@ function render() {
   const reveal = clamp(localScroll / transitionDistance);
   const progress = clamp((localScroll - transitionDistance) / distance);
   const trackOffset = progress * distance;
-  const step = Math.floor(progress * 18);
+  const step = Math.floor(progress * WALK_FRAME_COUNT * WALK_CYCLE_COUNT);
+  const frameIndex = step % WALK_FRAME_COUNT;
   const bob = Math.sin(progress * Math.PI * 18) * 4;
   const movement = (progress - previousProgress) * distance;
 
@@ -232,14 +243,14 @@ function render() {
   );
   root.style.setProperty("--track-x", `${(-trackOffset).toFixed(2)}px`);
   root.style.setProperty("--walker-bob", `${bob.toFixed(2)}px`);
-  walker.classList.toggle("is-step-two", step % 2 === 1);
   walker.classList.toggle("is-walking-backward", walkingBackward);
+  updateNavigation(localScroll, trackOffset);
 
   const walkerRect = walker.getBoundingClientRect();
   const hasPassedIntro = introScene.getBoundingClientRect().right < walkerRect.left;
   const currentWalkingImage = hasPassedIntro
-    ? frontImages[step % 2]
-    : phoneImages[step % 2];
+    ? frontImages[frameIndex]
+    : phoneImages[frameIndex];
 
   walker.classList.toggle("has-passed-intro", hasPassedIntro);
 
@@ -248,6 +259,17 @@ function render() {
   );
 
   walker.classList.toggle("is-looking-up", shouldLookUp);
+
+  const activeImages = shouldLookUp
+    ? upImages
+    : hasPassedIntro
+      ? frontImages
+      : phoneImages;
+
+  walkingImages.forEach((image) => {
+    image.classList.toggle("is-active", image === activeImages[frameIndex]);
+  });
+
   updateAlphaHover();
   ticking = false;
 }
@@ -258,19 +280,58 @@ function requestRender() {
   requestAnimationFrame(render);
 }
 
+function getLampTrackOffset(lamp) {
+  const focusX = Number(lamp.dataset.focusX || 0.5);
+  const lampPosition = lamp.offsetLeft + lamp.offsetWidth * focusX;
+
+  return clamp(lampPosition - window.innerWidth / 2, 0, distance);
+}
+
+function updateNavigation(localScroll, trackOffset) {
+  const isTopActive = localScroll < transitionDistance;
+
+  topButton.classList.toggle("is-active", isTopActive);
+
+  if (isTopActive) {
+    topButton.setAttribute("aria-current", "location");
+  } else {
+    topButton.removeAttribute("aria-current");
+  }
+
+  let activeLampIndex = -1;
+  let nearestDistance = Infinity;
+
+  if (!isTopActive) {
+    lamps.forEach((lamp, index) => {
+      const lampDistance = Math.abs(getLampTrackOffset(lamp) - trackOffset);
+
+      if (lampDistance < nearestDistance) {
+        nearestDistance = lampDistance;
+        activeLampIndex = index;
+      }
+    });
+  }
+
+  lampNavButtons.forEach((button, index) => {
+    const isActive = index === activeLampIndex;
+
+    button.classList.toggle("is-active", isActive);
+
+    if (isActive) {
+      button.setAttribute("aria-current", "location");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  });
+}
+
 function scrollToLamp(lampIndex, behavior = "smooth") {
   const lamp = lamps[lampIndex - 1];
   if (!lamp) return;
 
   measure();
 
-  const focusX = Number(lamp.dataset.focusX || 0.5);
-  const lampPosition = lamp.offsetLeft + lamp.offsetWidth * focusX;
-  const centeredTrackOffset = clamp(
-    lampPosition - window.innerWidth / 2,
-    0,
-    distance,
-  );
+  const centeredTrackOffset = getLampTrackOffset(lamp);
   const targetScroll =
     horizontalStart + transitionDistance + centeredTrackOffset;
 
@@ -285,6 +346,20 @@ lampNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
     scrollToLamp(Number(button.dataset.lampIndex));
   });
+});
+
+window.addEventListener("click", (event) => {
+  if (event.target.closest("a, button")) return;
+
+  const clickedLamp = alphaHitLamps.find(
+    (lamp) =>
+      lamp.dataset.detailUrl &&
+      isColoredPixel(lamp, event.clientX, event.clientY),
+  );
+
+  if (clickedLamp) {
+    window.location.href = clickedLamp.dataset.detailUrl;
+  }
 });
 
 window.addEventListener(
