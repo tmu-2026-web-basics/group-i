@@ -10,6 +10,8 @@ let loopAnimation = null;
 let currentOtherLightsSpeed = 1;
 let targetOtherLightsSpeed = 1;
 let lastWheelTime = 0;
+let canControlOtherLightsWithWheel = false;
+let otherLightsPointerPosition = null;
 
 const clamp = (value, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -157,6 +159,8 @@ function animateOtherLightsSpeed(time) {
 }
 
 function accelerateOtherLights(event) {
+  if (!canControlOtherLightsWithWheel) return;
+
   event.preventDefault();
 
   const [animation] = otherLightsTrack.getAnimations();
@@ -187,9 +191,46 @@ function accelerateOtherLights(event) {
   }
 }
 
+function startOtherLightsPointerCheck(event) {
+  canControlOtherLightsWithWheel = false;
+  otherLightsPointerPosition = {
+    x: event.clientX,
+    y: event.clientY,
+  };
+}
+
+function enableOtherLightsWheelControl(event) {
+  if (!otherLightsPointerPosition) {
+    startOtherLightsPointerCheck(event);
+    return;
+  }
+
+  const distance = Math.hypot(
+    event.clientX - otherLightsPointerPosition.x,
+    event.clientY - otherLightsPointerPosition.y,
+  );
+
+  if (distance >= 3) {
+    canControlOtherLightsWithWheel = true;
+  }
+
+  otherLightsPointerPosition = {
+    x: event.clientX,
+    y: event.clientY,
+  };
+}
+
+function stopOtherLightsWheelControl() {
+  canControlOtherLightsWithWheel = false;
+  otherLightsPointerPosition = null;
+}
+
 renderOtherLights();
 window.addEventListener("load", drawHalftone);
 window.addEventListener("resize", requestHalftoneDraw);
+otherLights.addEventListener("pointerenter", startOtherLightsPointerCheck);
+otherLights.addEventListener("pointermove", enableOtherLightsWheelControl);
+otherLights.addEventListener("pointerleave", stopOtherLightsWheelControl);
 otherLights.addEventListener("wheel", accelerateOtherLights, {
   passive: false,
 });

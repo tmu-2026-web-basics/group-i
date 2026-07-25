@@ -639,7 +639,7 @@ img {
   pointer-events: auto;
   opacity: 0;
   transform: translate(-92%, 0) scale(1);
-  transform-origin: right top;
+  transform-origin: center;
   transition:
     opacity 0.2s ease,
     transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);

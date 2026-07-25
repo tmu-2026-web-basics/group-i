@@ -330,6 +330,7 @@ body[data-streetlight="2"] .detail-hero__title--contained img {
   display: grid;
   flex: 0 0 var(--other-size);
   width: var(--other-size);
+  height: var(--other-size);
   aspect-ratio: 1;
   place-items: center;
   color: var(--brown1);
