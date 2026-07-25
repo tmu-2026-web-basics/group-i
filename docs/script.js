@@ -4,21 +4,16 @@ const track = document.querySelector("#track");
 const walker = document.querySelector("#walker");
 const introScene = document.querySelector(".scene--intro");
 const lamps = [...document.querySelectorAll(".lamp")];
-const alphaHitLamps = lamps.filter((lamp) => lamp.hasAttribute("data-alpha-hit"));
 const callouts = [...document.querySelectorAll(".lamp__callout")];
-const calloutImages = [...document.querySelectorAll(".lamp__callout-image")];
 const phoneImages = [...document.querySelectorAll(".walker__pose--phone")];
 const frontImages = [...document.querySelectorAll(".walker__pose--front")];
 const upImages = [...document.querySelectorAll(".walker__pose--up")];
-const walkingImages = [...phoneImages, ...frontImages, ...upImages];
 const topButton = document.querySelector("#topButton");
 const lampNavButtons = [...document.querySelectorAll("[data-lamp-index]")];
 const WALK_FRAME_COUNT = 4;
 const WALK_CYCLE_COUNT = 9;
+const BACKGROUND_IMAGE_URLS = ["images/top/building.webp"];
 
-const imageMasks = new Map();
-let pointerX = -1;
-let pointerY = -1;
 let distance = 1;
 let transitionDistance = 1;
 let horizontalStart = 0;
@@ -27,11 +22,37 @@ let walkingBackward = false;
 let ticking = false;
 let isNavigatingToDetail = false;
 let navigationFrame = 0;
-let hoverRefreshTimer = 0;
 let lampTrackOffsets = [];
+let lampImageTrackBounds = [];
+let introTrackRight = 0;
+let walkerMetrics = null;
+let activeNavigationIndex = null;
+let activeWalkingImage = document.querySelector(".walker__pose.is-active");
+let pageReady = false;
+let directionInputEnabled = false;
+
+walker.classList.remove("is-walking-backward");
 
 const clamp = (value, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
+
+function getContainedImageBox(image) {
+  const boxWidth = image.offsetWidth;
+  const boxHeight = image.offsetHeight;
+  const naturalWidth = image.naturalWidth || boxWidth;
+  const naturalHeight = image.naturalHeight || boxHeight;
+  const scale = Math.min(boxWidth / naturalWidth, boxHeight / naturalHeight);
+  const width = naturalWidth * scale;
+  const height = naturalHeight * scale;
+
+  return {
+    left: image.offsetLeft + (boxWidth - width) / 2,
+    top: image.offsetTop + boxHeight - height,
+    right: image.offsetLeft + (boxWidth + width) / 2,
+    width,
+    height,
+  };
+}
 
 function measure() {
   distance = Math.max(track.scrollWidth - window.innerWidth, 1);
@@ -44,195 +65,24 @@ function measure() {
 
     return clamp(lampPosition - window.innerWidth / 2, 0, distance);
   });
-}
 
-function getContainedImageGeometry(rect, mask, translateY = 0) {
-  const scale = Math.min(rect.width / mask.width, rect.height / mask.height);
-  const width = mask.width * scale;
-  const height = mask.height * scale;
-
-  return {
-    left: rect.left + (rect.width - width) / 2,
-    top: rect.bottom - height + translateY,
-    right: rect.left + (rect.width + width) / 2,
-    bottom: rect.bottom + translateY,
-    scale,
+  introTrackRight = introScene.offsetLeft + introScene.offsetWidth;
+  walkerMetrics = {
+    left: walker.offsetLeft,
+    width: walker.offsetWidth,
+    height: walker.offsetHeight,
   };
-}
 
-function isColoredPixel(lamp, clientX, clientY) {
-  const image = lamp.querySelector(".lamp__image--off");
-  const mask = imageMasks.get(image);
-  if (!image || !mask) return false;
+  lampImageTrackBounds = lamps.map((lamp) => {
+    const image = lamp.querySelector(".lamp__image--off");
+    if (!image) return null;
 
-  const geometry = getContainedImageGeometry(image.getBoundingClientRect(), mask);
-  const coloredBounds = getColoredScreenBounds(geometry, mask);
-  const hitPadding = Number(lamp.dataset.hitPadding || 0);
-
-  if (
-    clientX < coloredBounds.left - hitPadding ||
-    clientX > coloredBounds.right + hitPadding ||
-    clientY < coloredBounds.top - hitPadding ||
-    clientY > coloredBounds.bottom + hitPadding
-  ) {
-    return false;
-  }
-
-  const imageX = Math.floor((clientX - geometry.left) / geometry.scale);
-  const imageY = Math.floor((clientY - geometry.top) / geometry.scale);
-  const radius = Math.ceil(hitPadding / geometry.scale);
-
-  if (
-    imageX < -radius ||
-    imageX >= mask.width + radius ||
-    imageY < -radius ||
-    imageY >= mask.height + radius
-  ) {
-    return false;
-  }
-
-  const startX = Math.max(imageX - radius, 0);
-  const endX = Math.min(imageX + radius, mask.width - 1);
-  const startY = Math.max(imageY - radius, 0);
-  const endY = Math.min(imageY + radius, mask.height - 1);
-  const radiusSquared = radius * radius;
-
-  for (let y = startY; y <= endY; y += 1) {
-    const deltaY = y - imageY;
-    const row = y * mask.width;
-
-    for (let x = startX; x <= endX; x += 1) {
-      const deltaX = x - imageX;
-
-      if (
-        deltaX * deltaX + deltaY * deltaY <= radiusSquared &&
-        mask.alpha[row + x] > 0
-      ) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-function updateAlphaHover() {
-  const hasPointer = pointerX >= 0 && pointerY >= 0;
-  let isClickableLampHovered = false;
-
-  alphaHitLamps.forEach((lamp) => {
-    const isHovered = hasPointer && isColoredPixel(lamp, pointerX, pointerY);
-    lamp.classList.toggle("is-alpha-hovered", isHovered);
-
-    if (isHovered && lamp.dataset.detailUrl) {
-      isClickableLampHovered = true;
-    }
+    const imageBox = getContainedImageBox(image);
+    return {
+      left: lamp.offsetLeft + imageBox.left,
+      right: lamp.offsetLeft + imageBox.right,
+    };
   });
-
-  root.classList.toggle("is-clickable-lamp-hovered", isClickableLampHovered);
-}
-
-function getWalkerImageGeometry(walkingImage, walkingMask) {
-  const walkerRect = walker.getBoundingClientRect();
-  const imageTranslateY = walkerRect.height * 0.04;
-
-  return getContainedImageGeometry(walkerRect, walkingMask, imageTranslateY);
-}
-
-function getColoredScreenBounds(geometry, mask) {
-  return {
-    left: geometry.left + mask.bounds.left * geometry.scale,
-    top: geometry.top + mask.bounds.top * geometry.scale,
-    right: geometry.left + (mask.bounds.right + 1) * geometry.scale,
-    bottom: geometry.top + (mask.bounds.bottom + 1) * geometry.scale,
-  };
-}
-
-function isWithinLampRange(walkingImage, lamp) {
-  const lampImage = lamp.querySelector(".lamp__image--off");
-  const walkingMask = imageMasks.get(walkingImage);
-  const lampMask = imageMasks.get(lampImage);
-
-  if (!lampImage || !walkingMask || !lampMask) return false;
-
-  const walkingBounds = getColoredScreenBounds(
-    getWalkerImageGeometry(walkingImage, walkingMask),
-    walkingMask,
-  );
-  const lampBounds = getColoredScreenBounds(
-    getContainedImageGeometry(lampImage.getBoundingClientRect(), lampMask),
-    lampMask,
-  );
-  const distanceBeforeLamp = lampBounds.left - walkingBounds.right;
-  const hasNotPassedLamp = walkingBounds.left <= lampBounds.right;
-
-  return distanceBeforeLamp <= 100 && hasNotPassedLamp;
-}
-
-async function readAlphaMask(image) {
-  await image.decode();
-
-  const canvas = document.createElement("canvas");
-  canvas.width = image.naturalWidth;
-  canvas.height = image.naturalHeight;
-
-  const context = canvas.getContext("2d", { willReadFrequently: true });
-  if (!context) return null;
-
-  context.drawImage(image, 0, 0);
-  const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-  const alpha = new Uint8Array(canvas.width * canvas.height);
-  const bounds = {
-    left: canvas.width,
-    top: canvas.height,
-    right: 0,
-    bottom: 0,
-  };
-
-  for (
-    let pixelIndex = 0, alphaIndex = 3;
-    pixelIndex < alpha.length;
-    pixelIndex += 1, alphaIndex += 4
-  ) {
-    alpha[pixelIndex] = pixels[alphaIndex];
-
-    if (pixels[alphaIndex] > 0) {
-      const x = pixelIndex % canvas.width;
-      const y = Math.floor(pixelIndex / canvas.width);
-      bounds.left = Math.min(bounds.left, x);
-      bounds.top = Math.min(bounds.top, y);
-      bounds.right = Math.max(bounds.right, x);
-      bounds.bottom = Math.max(bounds.bottom, y);
-    }
-  }
-
-  return {
-    width: canvas.width,
-    height: canvas.height,
-    alpha,
-    bounds,
-  };
-}
-
-async function prepareAlphaMasks() {
-  const lampImages = lamps.map((lamp) =>
-    lamp.querySelector(".lamp__image--off"),
-  );
-  const images = [...lampImages, ...calloutImages, ...walkingImages].filter(Boolean);
-
-  await Promise.all(
-    images.map(async (image) => {
-      try {
-        const mask = await readAlphaMask(image);
-        if (mask) imageMasks.set(image, mask);
-      } catch {
-        imageMasks.delete(image);
-      }
-    }),
-  );
-
-  positionCallouts();
-  render();
 }
 
 function positionCallouts() {
@@ -243,70 +93,82 @@ function positionCallouts() {
   const referenceCalloutImage = referenceLamp?.querySelector(
     ".lamp__callout-image",
   );
-  const referenceLampMask = imageMasks.get(referenceLampImage);
-  const referenceCalloutMask = imageMasks.get(referenceCalloutImage);
-  let alignedCalloutTop = null;
+  let alignedCalloutCenter = null;
 
-  if (referenceLampImage && referenceLampMask && referenceCalloutMask) {
-    const referenceLampBounds = getColoredScreenBounds(
-      getContainedImageGeometry(
-        referenceLampImage.getBoundingClientRect(),
-        referenceLampMask,
-      ),
-      referenceLampMask,
-    );
-    const referenceVisibleWidth =
-      referenceCalloutMask.bounds.right -
-      referenceCalloutMask.bounds.left +
-      1;
+  if (referenceLampImage && referenceCalloutImage) {
+    const referenceLampBox = getContainedImageBox(referenceLampImage);
+    const referenceAnchorHeight =
+      baseCalloutWidth *
+      (referenceCalloutImage.naturalHeight / referenceCalloutImage.naturalWidth);
     const referenceVisibleHeight =
-      referenceCalloutMask.bounds.bottom -
-      referenceCalloutMask.bounds.top +
-      1;
-    const referenceScale = baseCalloutWidth / referenceVisibleWidth;
+      visibleCalloutWidth *
+      (referenceCalloutImage.naturalHeight / referenceCalloutImage.naturalWidth);
+    const referenceTop =
+      referenceLamp.offsetTop +
+      referenceLampBox.top -
+      referenceAnchorHeight * 0.46;
 
-    alignedCalloutTop =
-      referenceLampBounds.top - referenceVisibleHeight * referenceScale * 0.46;
+    alignedCalloutCenter = referenceTop + referenceVisibleHeight / 2;
   }
 
   lamps.forEach((lamp) => {
     const lampImage = lamp.querySelector(".lamp__image--off");
     const callout = lamp.querySelector(".lamp__callout");
-    const lampMask = imageMasks.get(lampImage);
+    if (!lampImage || !callout) return;
 
-    if (!lampImage || !callout || !lampMask) return;
-
-    const lampRect = lamp.getBoundingClientRect();
-    const lampBounds = getColoredScreenBounds(
-      getContainedImageGeometry(lampImage.getBoundingClientRect(), lampMask),
-      lampMask,
-    );
-
-    callout.style.left = `${lampBounds.left - lampRect.left}px`;
-    callout.style.top = `${
-      alignedCalloutTop === null
-        ? lampBounds.top - lampRect.top
-        : alignedCalloutTop - lampRect.top
-    }px`;
+    const lampBox = getContainedImageBox(lampImage);
+    callout.style.left = `${lampBox.left}px`;
 
     const calloutImage = callout.querySelector(".lamp__callout-image");
-    const calloutMask = imageMasks.get(calloutImage);
+    if (calloutImage) {
+      const calloutScale = lamp.classList.contains("lamp--4") ? 1.25 : 1;
+      const calloutWidth = visibleCalloutWidth * calloutScale;
+      const calloutHeight =
+        calloutWidth *
+        (calloutImage.naturalHeight / calloutImage.naturalWidth);
 
-    if (calloutImage && calloutMask) {
-      const visibleWidth = calloutMask.bounds.right - calloutMask.bounds.left + 1;
-      const visibleHeight = calloutMask.bounds.bottom - calloutMask.bounds.top + 1;
-      const imageScale = visibleCalloutWidth / visibleWidth;
+      callout.style.width = `${calloutWidth}px`;
+      callout.style.height = `${calloutHeight}px`;
+      calloutImage.style.inset = "0";
+      calloutImage.style.width = "100%";
+      calloutImage.style.height = "100%";
 
-      callout.style.width = `${visibleCalloutWidth}px`;
-      callout.style.height = `${visibleHeight * imageScale}px`;
-      calloutImage.style.width = `${calloutMask.width * imageScale}px`;
-      calloutImage.style.height = `${calloutMask.height * imageScale}px`;
-      calloutImage.style.left = `${-calloutMask.bounds.left * imageScale}px`;
-      calloutImage.style.top = `${-calloutMask.bounds.top * imageScale}px`;
+      callout.style.top = `${
+        alignedCalloutCenter === null
+          ? lampBox.top
+          : alignedCalloutCenter - calloutHeight / 2 - lamp.offsetTop
+      }px`;
     }
 
     callout.classList.add("is-positioned");
   });
+}
+
+function getWalkerScreenBounds(walkingImage) {
+  const naturalWidth = walkingImage.naturalWidth || walkerMetrics.width;
+  const naturalHeight = walkingImage.naturalHeight || walkerMetrics.height;
+  const scale = Math.min(
+    walkerMetrics.width / naturalWidth,
+    walkerMetrics.height / naturalHeight,
+  );
+  const imageWidth = naturalWidth * scale;
+  const walkerLeft = walkingBackward
+    ? window.innerWidth - walkerMetrics.left - walkerMetrics.width
+    : walkerMetrics.left;
+  const left = walkerLeft + (walkerMetrics.width - imageWidth) / 2;
+
+  return { left, right: left + imageWidth };
+}
+
+function isWithinLampRange(walkerBounds, lampBounds, trackOffset) {
+  if (!lampBounds) return false;
+
+  const lampLeft = lampBounds.left - trackOffset;
+  const lampRight = lampBounds.right - trackOffset;
+  return (
+    lampLeft - walkerBounds.right <= 100 &&
+    walkerBounds.left <= lampRight
+  );
 }
 
 function openLampDetail(lamp, url) {
@@ -330,10 +192,10 @@ function render() {
   const bob = Math.sin(progress * Math.PI * 18) * 4;
   const movement = (progress - previousProgress) * distance;
 
-  if (Math.abs(movement) >= 0.5) {
+  if (directionInputEnabled && Math.abs(movement) >= 0.5) {
     walkingBackward = movement < 0;
-    previousProgress = progress;
   }
+  previousProgress = progress;
 
   root.style.setProperty(
     "--panel-x",
@@ -344,16 +206,22 @@ function render() {
   walker.classList.toggle("is-walking-backward", walkingBackward);
   updateNavigation(localScroll, trackOffset);
 
-  const walkerRect = walker.getBoundingClientRect();
-  const hasPassedIntro = introScene.getBoundingClientRect().right < walkerRect.left;
+  const provisionalImage =
+    introTrackRight - trackOffset < walkerMetrics.left
+      ? frontImages[frameIndex]
+      : phoneImages[frameIndex];
+  const provisionalBounds = getWalkerScreenBounds(provisionalImage);
+  const hasPassedIntro =
+    introTrackRight - trackOffset < provisionalBounds.left;
   const currentWalkingImage = hasPassedIntro
     ? frontImages[frameIndex]
     : phoneImages[frameIndex];
 
   walker.classList.toggle("has-passed-intro", hasPassedIntro);
 
-  const shouldLookUp = lamps.some((lamp) =>
-    isWithinLampRange(currentWalkingImage, lamp),
+  const currentWalkerBounds = getWalkerScreenBounds(currentWalkingImage);
+  const shouldLookUp = lampImageTrackBounds.some((lampBounds) =>
+    isWithinLampRange(currentWalkerBounds, lampBounds, trackOffset),
   );
 
   walker.classList.toggle("is-looking-up", shouldLookUp);
@@ -364,9 +232,12 @@ function render() {
       ? frontImages
       : phoneImages;
 
-  walkingImages.forEach((image) => {
-    image.classList.toggle("is-active", image === activeImages[frameIndex]);
-  });
+  const nextWalkingImage = activeImages[frameIndex];
+  if (nextWalkingImage !== activeWalkingImage) {
+    activeWalkingImage?.classList.remove("is-active");
+    nextWalkingImage.classList.add("is-active");
+    activeWalkingImage = nextWalkingImage;
+  }
 
   ticking = false;
 }
@@ -394,15 +265,6 @@ function getLampTrackOffset(lamp) {
 
 function updateNavigation(localScroll, trackOffset) {
   const isTopActive = localScroll < transitionDistance;
-
-  topButton.classList.toggle("is-active", isTopActive);
-
-  if (isTopActive) {
-    topButton.setAttribute("aria-current", "location");
-  } else {
-    topButton.removeAttribute("aria-current");
-  }
-
   let activeLampIndex = -1;
   let nearestDistance = Infinity;
 
@@ -415,6 +277,18 @@ function updateNavigation(localScroll, trackOffset) {
         activeLampIndex = index;
       }
     });
+  }
+
+  const nextNavigationIndex = isTopActive ? 0 : activeLampIndex + 1;
+  if (nextNavigationIndex === activeNavigationIndex) return;
+  activeNavigationIndex = nextNavigationIndex;
+
+  topButton.classList.toggle("is-active", isTopActive);
+
+  if (isTopActive) {
+    topButton.setAttribute("aria-current", "location");
+  } else {
+    topButton.removeAttribute("aria-current");
   }
 
   lampNavButtons.forEach((button, index) => {
@@ -458,14 +332,13 @@ function animateScrollTo(targetScroll, behavior = "smooth") {
     Math.abs(scrollDistance) < 1
   ) {
     window.scrollTo({ top: targetScroll, behavior: "auto" });
-    updateAlphaHover();
     return;
   }
 
   const duration = clamp(
-    450 + Math.abs(scrollDistance) * 0.025,
-    500,
-    900,
+    450 + Math.sqrt(Math.abs(scrollDistance)) * 12,
+    550,
+    2200,
   );
   const startedAt = performance.now();
 
@@ -484,7 +357,6 @@ function animateScrollTo(targetScroll, behavior = "smooth") {
     }
 
     navigationFrame = 0;
-    updateAlphaHover();
   }
 
   navigationFrame = requestAnimationFrame(animateFrame);
@@ -492,9 +364,7 @@ function animateScrollTo(targetScroll, behavior = "smooth") {
 
 function scrollToLamp(lampIndex, behavior = "smooth") {
   const lamp = lamps[lampIndex - 1];
-  if (!lamp) return;
-
-  measure();
+  if (!lamp || !pageReady) return;
 
   const centeredTrackOffset = getLampTrackOffset(lamp);
   const targetScroll =
@@ -504,11 +374,14 @@ function scrollToLamp(lampIndex, behavior = "smooth") {
 }
 
 topButton.addEventListener("click", () => {
+  if (!pageReady) return;
+  directionInputEnabled = true;
   animateScrollTo(0);
 });
 
 lampNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
+    directionInputEnabled = true;
     scrollToLamp(Number(button.dataset.lampIndex));
   });
 });
@@ -535,47 +408,23 @@ lamps.forEach((lamp) => {
   });
 });
 
-window.addEventListener("click", (event) => {
-  if (event.target.closest("a, button")) return;
-
-  const clickedLamp = alphaHitLamps.find(
-    (lamp) =>
-      lamp.dataset.detailUrl &&
-      isColoredPixel(lamp, event.clientX, event.clientY),
-  );
-
-  if (clickedLamp) {
-    openLampDetail(clickedLamp, clickedLamp.dataset.detailUrl);
-  }
-});
-
+window.addEventListener("scroll", requestRender, { passive: true });
 window.addEventListener(
-  "pointermove",
-  (event) => {
-    pointerX = event.clientX;
-    pointerY = event.clientY;
-    updateAlphaHover();
-  },
-  { passive: true },
-);
-
-document.documentElement.addEventListener("mouseleave", () => {
-  pointerX = -1;
-  pointerY = -1;
-  updateAlphaHover();
-});
-
-window.addEventListener(
-  "scroll",
+  "wheel",
   () => {
-    requestRender();
-    window.clearTimeout(hoverRefreshTimer);
-    hoverRefreshTimer = window.setTimeout(updateAlphaHover, 80);
+    directionInputEnabled = true;
+    cancelNavigationScroll();
   },
   { passive: true },
 );
-window.addEventListener("wheel", cancelNavigationScroll, { passive: true });
-window.addEventListener("touchstart", cancelNavigationScroll, { passive: true });
+window.addEventListener(
+  "touchstart",
+  () => {
+    directionInputEnabled = true;
+    cancelNavigationScroll();
+  },
+  { passive: true },
+);
 window.addEventListener("keydown", (event) => {
   if (
     [
@@ -588,19 +437,47 @@ window.addEventListener("keydown", (event) => {
       " ",
     ].includes(event.key)
   ) {
+    directionInputEnabled = true;
     cancelNavigationScroll();
   }
 });
 window.addEventListener("resize", () => {
+  if (!pageReady) return;
   cancelNavigationScroll();
   measure();
   positionCallouts();
   render();
 });
-window.addEventListener("load", () => {
+async function decodeTopImages() {
+  const backgroundImages = BACKGROUND_IMAGE_URLS.map((url) => {
+    const image = new Image();
+    image.src = url;
+    return image;
+  });
+
+  await Promise.allSettled(
+    [...document.images, ...backgroundImages].map((image) => {
+      if (typeof image.decode === "function") return image.decode();
+      if (image.complete) return Promise.resolve();
+
+      return new Promise((resolve) => {
+        image.addEventListener("load", resolve, { once: true });
+        image.addEventListener("error", resolve, { once: true });
+      });
+    }),
+  );
+}
+
+async function initializePage() {
+  await decodeTopImages();
+  if (document.fonts?.ready) await document.fonts.ready;
+
   measure();
+  positionCallouts();
+  pageReady = true;
   render();
-  prepareAlphaMasks();
+  document.body.classList.remove("is-preparing");
+  document.body.removeAttribute("aria-busy");
 
   const requestedLamp = Number(
     new URLSearchParams(window.location.search).get("streetlight"),
@@ -609,8 +486,6 @@ window.addEventListener("load", () => {
   if (requestedLamp >= 1 && requestedLamp <= lamps.length) {
     requestAnimationFrame(() => scrollToLamp(requestedLamp, "auto"));
   }
-});
-document.fonts?.ready.then(() => {
-  measure();
-  render();
-});
+}
+
+initializePage();

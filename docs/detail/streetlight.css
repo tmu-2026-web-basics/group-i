@@ -254,6 +254,12 @@ body[data-streetlight="2"] .detail-hero__title--contained img {
   letter-spacing: 0.04em;
 }
 
+.story a {
+  color: inherit;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.18em;
+}
+
 .story--comment {
   min-height: 680px;
 }

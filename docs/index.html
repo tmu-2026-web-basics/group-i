@@ -6,13 +6,16 @@
     <meta name="description" content="街灯を探しながら、少しだけ上を向いて歩く横スクロールサイト。" />
     <title>上を向いて歩こう</title>
     <link rel="icon" href="images/logo/icon-top.webp" />
+    <link rel="preload" as="image" href="images/top/top_01.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="images/top/building.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js" defer></script>
   </head>
-  <body id="page-top">
+  <body id="page-top" class="is-preparing" aria-busy="true">
+    <div class="page-loader" role="status" aria-live="polite">画像を読み込み中…</div>
     <section class="opening" aria-labelledby="opening-title">
       <div class="opening__sticky">
         <img class="opening__image" src="images/top/top_01.webp" alt="街灯のそばを歩きながらスマートフォンを見る人" />
@@ -129,7 +132,7 @@
           </section>
         </div>
 
-        <a class="lamp lamp--1" href="detail/streetlight_01/streetlight_01.html" data-alpha-hit data-detail-url="detail/streetlight_01/streetlight_01.html" aria-label="街灯1の詳細を見る">
+        <a class="lamp lamp--1" href="detail/streetlight_01/streetlight_01.html" aria-label="街灯1の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_01/streetlight_01.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_01/streetlight_glow_01.webp" alt="" />
           <span class="lamp__callout" aria-hidden="true">
@@ -137,7 +140,7 @@
           </span>
         </a>
 
-        <a class="lamp lamp--2" href="detail/streetlight_02/streetlight_02.html" data-focus-x="0.29" data-alpha-hit data-hit-padding="30" data-detail-url="detail/streetlight_02/streetlight_02.html" aria-label="街灯2の詳細を見る">
+        <a class="lamp lamp--2" href="detail/streetlight_02/streetlight_02.html" data-focus-x="0.29" aria-label="街灯2の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_02/streetlight_02.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_02/streetlight_glow_02.webp" alt="" />
           <span class="lamp__callout" aria-hidden="true">
@@ -145,7 +148,7 @@
           </span>
         </a>
 
-        <a class="lamp lamp--3" href="detail/streetlight_03/streetlight_03.html" data-focus-x="0.33" data-alpha-hit data-hit-padding="30" data-detail-url="detail/streetlight_03/streetlight_03.html" aria-label="街灯3の詳細を見る">
+        <a class="lamp lamp--3" href="detail/streetlight_03/streetlight_03.html" data-focus-x="0.33" aria-label="街灯3の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_03/streetlight_03.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_03/streetlight_glow_03.webp" alt="" />
           <span class="lamp__callout" aria-hidden="true">
@@ -153,7 +156,7 @@
           </span>
         </a>
 
-        <a class="lamp lamp--4" href="detail/streetlight_04/streetlight_04.html" data-focus-x="0.56" data-alpha-hit data-hit-padding="30" data-detail-url="detail/streetlight_04/streetlight_04.html" aria-label="街灯4の詳細を見る">
+        <a class="lamp lamp--4" href="detail/streetlight_04/streetlight_04.html" data-focus-x="0.56" aria-label="街灯4の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_04/streetlight_04.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_04/streetlight_glow_04.webp" alt="" />
           <span class="lamp__callout" aria-hidden="true">
@@ -161,12 +164,15 @@
           </span>
         </a>
 
-        <a class="lamp lamp--5" href="detail/streetlight_05/streetlight_05.html" data-focus-x="0.56" data-alpha-hit data-hit-padding="30" data-detail-url="detail/streetlight_05/streetlight_05.html" aria-label="街灯5の詳細を見る">
+        <a class="lamp lamp--5" href="detail/streetlight_05/streetlight_05.html" data-focus-x="0.56" aria-label="街灯5の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_05/streetlight_05.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_05/streetlight_glow_05.webp" alt="" />
+          <span class="lamp__callout" aria-hidden="true">
+            <img class="lamp__callout-image" src="images/logo/logo-callout_05.webp" alt="" />
+          </span>
         </a>
 
-        <a class="lamp lamp--6" href="detail/streetlight_06/streetlight_06.html" data-focus-x="0.56" data-alpha-hit data-hit-padding="30" data-detail-url="detail/streetlight_06/streetlight_06.html" aria-label="街灯6の詳細を見る">
+        <a class="lamp lamp--6" href="detail/streetlight_06/streetlight_06.html" data-focus-x="0.56" aria-label="街灯6の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_06/streetlight_06.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_06/streetlight_glow_06.webp" alt="" />
           <span class="lamp__callout" aria-hidden="true">
@@ -174,9 +180,12 @@
           </span>
         </a>
 
-        <a class="lamp lamp--7" href="detail/streetlight_07/streetlight_07.html" data-focus-x="0.56" data-alpha-hit data-hit-padding="30" data-detail-url="detail/streetlight_07/streetlight_07.html" aria-label="街灯7の詳細を見る">
+        <a class="lamp lamp--7" href="detail/streetlight_07/streetlight_07.html" data-focus-x="0.56" aria-label="街灯7の詳細を見る">
           <img class="lamp__image lamp__image--off" src="images/streetlight/streetlight_07/streetlight_07.webp" alt="" />
           <img class="lamp__image lamp__image--on" src="images/streetlight/streetlight_07/streetlight_glow_07.webp" alt="" />
+          <span class="lamp__callout" aria-hidden="true">
+            <img class="lamp__callout-image" src="images/logo/logo-callout_07.webp" alt="" />
+          </span>
         </a>
 
         <div class="walker" id="walker" aria-hidden="true">
