@@ -28,7 +28,7 @@ function createOtherLightsSet(streetlightIds, isDuplicate = false) {
     const paddedId = String(streetlightId).padStart(2, "0");
 
     link.href = `../streetlight_${paddedId}/streetlight_${paddedId}.html`;
-    image.src = `../../img/streetlight/streetlight_${paddedId}/detail-top_${paddedId}.webp`;
+    image.src = `../../images/streetlight/streetlight_${paddedId}/detail-top_${paddedId}.webp`;
     image.alt = "";
     image.loading = "lazy";
     image.decoding = "async";

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="街灯06の詳細ページです。" />
     <title>街灯06 | 上を向いて歩こう</title>
-    <link rel="icon" href="../../img/logo/icon-top.webp" />
+    <link rel="icon" href="../../images/logo/icon-top.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&amp;family=Zen+Maru+Gothic:wght@500;700;900&amp;display=swap" rel="stylesheet" />
@@ -16,27 +16,56 @@
     <section class="dot-field">
       <canvas class="halftone" aria-hidden="true"></canvas>
       <main class="detail-card">
-        <header class="detail-header"><a class="detail-header__home" href="../../index.html" aria-label="トップページへ戻る"><img src="../../img/logo/icon-yoko.webp" alt="上を向いて歩こう" /></a></header>
+        <header class="detail-header"><a class="detail-header__home" href="../../index.html" aria-label="トップページへ戻る"><img src="../../images/logo/icon-yoko.webp" alt="上を向いて歩こう" /></a></header>
         <section class="detail-hero" aria-labelledby="streetlight-name">
           <h1 class="detail-hero__title--contained" id="streetlight-name">
-            <img src="../../img/logo/logo_06.webp" alt="街灯06" />
+            <img src="../../images/logo/logo_06.webp" alt="街灯06" />
           </h1>
-          <div class="detail-hero__lamp"><img src="../../img/streetlight/streetlight_06/detail-top_06.webp" alt="街灯06のイラスト" /></div>
+          <div class="detail-hero__lamp"><img src="../../images/streetlight/streetlight_06/detail-top_06.webp" alt="街灯06のイラスト" /></div>
         </section>
         <div class="detail-content">
           <div class="story-sticky">
-            <figure class="street-photo"><img src="../../img/photo/photo_06.webp" alt="街灯06を見上げた写真" /></figure>
+            <figure class="street-photo"><img src="../../images/photo/photo_06.webp" alt="街灯06を見上げた写真" /></figure>
             <div class="story-sticky__copy">
-              <section class="story story--where" aria-labelledby="where-title"><div class="story__text"><h2 id="where-title">どこの街灯か</h2><p>街灯06が立っている場所について、周囲の景色や街の雰囲気を紹介する文章が入ります。</p></div></section>
-              <section class="story story--comment" aria-labelledby="comment-title"><div class="story__text"><h2 id="comment-title">街灯に一言</h2><p>街灯06を見上げて気づいた形や色、印象についての文章が入ります。</p></div></section>
+              <section class="story story--where" aria-labelledby="where-title">
+                <div class="story__text">
+                  <h2 id="where-title">どこの街灯か</h2>
+                  <p>葛飾中央図書館前。駅前なため人通りが多く3種類ほどの街灯がたくさん置いてある。</p>
+                </div>
+              </section>
+              <section class="story story--comment" aria-labelledby="comment-title">
+                <div class="story__text">
+                  <h2 id="comment-title">街灯に一言</h2>
+                  <p>
+                    まんまるな球体の明かりに<br />
+                    4本の輪っかがついていて惑星みたい。<br />
+                    真横から見るのと真下から見るのでは<br />
+                    雰囲気が違くみていておもしろい。
+                  </p>
+                </div>
+              </section>
             </div>
           </div>
-          <section class="location" aria-labelledby="location-title"><div class="map-frame map-frame--placeholder"><span>MAP 06</span></div><div class="location__text"><h2 id="location-title">場所のご案内</h2><address>住所は後から追加します。</address></div></section>
+          <section class="location" aria-labelledby="location-title">
+            <div class="map-frame" id="map06">
+              <iframe
+                title="東京都葛飾区金町6丁目2番1号のGoogleマップ"
+                src="https://www.google.com/maps?q=%E6%9D%B1%E4%BA%AC%E9%83%BD%E8%91%9B%E9%A3%BE%E5%8C%BA%E9%87%91%E7%94%BA6%E4%B8%81%E7%9B%AE2%E7%95%AA1%E5%8F%B7%20%E3%83%B4%E3%82%A3%E3%83%8A%E3%82%B7%E3%82%B9%E9%87%91%E7%94%BA%E3%83%96%E3%83%A9%E3%82%A4%E3%83%88%E3%82%B3%E3%83%BC%E3%83%883%E9%9A%8E&amp;output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="location__text">
+              <h2 id="location-title">場所のご案内</h2>
+              <address>東京都葛飾区金町6丁目2番1号<br />ヴィナシス金町ブライトコート3階</address>
+            </div>
+          </section>
           <nav class="other-lights" aria-label="ほかの街灯を見る"><p>other lights...</p><div class="other-lights__viewport"><div class="other-lights__track"></div></div></nav>
         </div>
       </main>
     </section>
-    <footer class="detail-bottom"><img src="../../img/logo/icon-white.webp" alt="上を向いて歩こう" /><small>© group-i</small></footer>
+    <footer class="detail-bottom"><img src="../../images/logo/icon-white.webp" alt="上を向いて歩こう" /><small>© group-i</small></footer>
     <a class="street-return" href="../../index.html?streetlight=6" aria-label="トップページの街灯6の場所へ戻る"><span aria-hidden="true">←</span><span>戻る</span></a>
   </body>
 </html>

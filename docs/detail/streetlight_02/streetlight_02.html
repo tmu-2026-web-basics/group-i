@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="街灯02の詳細ページです。" />
     <title>街灯02 | 上を向いて歩こう</title>
-    <link rel="icon" href="../../img/logo/icon-top.webp" />
+    <link rel="icon" href="../../images/logo/icon-top.webp" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&amp;family=Zen+Maru+Gothic:wght@500;700;900&amp;display=swap" rel="stylesheet" />
@@ -16,25 +16,55 @@
     <section class="dot-field">
       <canvas class="halftone" aria-hidden="true"></canvas>
       <main class="detail-card">
-        <header class="detail-header"><a class="detail-header__home" href="../../index.html" aria-label="トップページへ戻る"><img src="../../img/logo/icon-yoko.webp" alt="上を向いて歩こう" /></a></header>
+        <header class="detail-header"><a class="detail-header__home" href="../../index.html" aria-label="トップページへ戻る"><img src="../../images/logo/icon-yoko.webp" alt="上を向いて歩こう" /></a></header>
         <section class="detail-hero" aria-labelledby="streetlight-name">
-          <h1 class="detail-hero__title--contained" id="streetlight-name"><img src="../../img/logo/logo_02.webp" alt="街灯02" /></h1>
-          <div class="detail-hero__lamp"><img src="../../img/streetlight/streetlight_02/detail-top_02.webp" alt="街灯02のイラスト" /></div>
+          <h1 class="detail-hero__title--contained" id="streetlight-name"><img src="../../images/logo/logo_02.webp" alt="街灯02" /></h1>
+          <div class="detail-hero__lamp"><img src="../../images/streetlight/streetlight_02/detail-top_02.webp" alt="街灯02のイラスト" /></div>
         </section>
         <div class="detail-content">
           <div class="story-sticky">
-            <figure class="street-photo"><img src="../../img/photo/photo_02.webp" alt="街灯02を見上げた写真" /></figure>
+            <figure class="street-photo"><img src="../../images/photo/photo_02.webp" alt="街灯02を見上げた写真" /></figure>
             <div class="story-sticky__copy">
-              <section class="story story--where" aria-labelledby="where-title"><div class="story__text"><h2 id="where-title">どこの街灯か</h2><p>街灯02が立っている場所について、周囲の景色や街の雰囲気を紹介する文章が入ります。</p></div></section>
-              <section class="story story--comment" aria-labelledby="comment-title"><div class="story__text"><h2 id="comment-title">街灯に一言</h2><p>街灯02を見上げて気づいた形や色、印象についての文章が入ります。</p></div></section>
+              <section class="story story--where" aria-labelledby="where-title">
+                <div class="story__text">
+                  <h2 id="where-title">どこの街灯か</h2>
+                  <p>街の中に佇む平安時代からある大きな神社、葛飾八幡宮。この参道の途中、少し外れた場所にこの街灯がある。</p>
+                </div>
+              </section>
+              <section class="story story--comment" aria-labelledby="comment-title">
+                <div class="story__text">
+                  <h2 id="comment-title">街灯に一言</h2>
+                  <p>
+                    格子組の灯りはモダンな提灯や<br />
+                    灯籠のような様相をしている。<br />
+                    見た目は令和、心は平安。<br />
+                    夜になると参道の空気まで<br />
+                    少し昔に戻った気がする。
+                  </p>
+                </div>
+              </section>
             </div>
           </div>
-          <section class="location" aria-labelledby="location-title"><div class="map-frame map-frame--placeholder"><span>MAP 02</span></div><div class="location__text"><h2 id="location-title">場所のご案内</h2><address>住所は後から追加します。</address></div></section>
+          <section class="location" aria-labelledby="location-title">
+            <div class="map-frame" id="map02">
+              <iframe
+                title="千葉県市川市八幡4-2-1のGoogleマップ"
+                src="https://www.google.com/maps?q=%E5%8D%83%E8%91%89%E7%9C%8C%E5%B8%82%E5%B7%9D%E5%B8%82%E5%85%AB%E5%B9%A14-2-1&amp;output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="location__text">
+              <h2 id="location-title">場所のご案内</h2>
+              <address>千葉県市川市八幡4-2-1</address>
+            </div>
+          </section>
           <nav class="other-lights" aria-label="ほかの街灯を見る"><p>other lights...</p><div class="other-lights__viewport"><div class="other-lights__track"></div></div></nav>
         </div>
       </main>
     </section>
-    <footer class="detail-bottom"><img src="../../img/logo/icon-white.webp" alt="上を向いて歩こう" /><small>© group-i</small></footer>
+    <footer class="detail-bottom"><img src="../../images/logo/icon-white.webp" alt="上を向いて歩こう" /><small>© group-i</small></footer>
     <a class="street-return" href="../../index.html?streetlight=2" aria-label="トップページの街灯2の場所へ戻る"><span aria-hidden="true">←</span><span>戻る</span></a>
   </body>
 </html>
