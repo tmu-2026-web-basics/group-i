@@ -5,6 +5,8 @@ const walker = document.querySelector("#walker");
 const introScene = document.querySelector(".scene--intro");
 const lamps = [...document.querySelectorAll(".lamp")];
 const alphaHitLamps = lamps.filter((lamp) => lamp.hasAttribute("data-alpha-hit"));
+const callouts = [...document.querySelectorAll(".lamp__callout")];
+const calloutImages = [...document.querySelectorAll(".lamp__callout-image")];
 const phoneImages = [...document.querySelectorAll(".walker__pose--phone")];
 const frontImages = [...document.querySelectorAll(".walker__pose--front")];
 const upImages = [...document.querySelectorAll(".walker__pose--up")];
@@ -23,6 +25,10 @@ let horizontalStart = 0;
 let previousProgress = 0;
 let walkingBackward = false;
 let ticking = false;
+let isNavigatingToDetail = false;
+let navigationFrame = 0;
+let hoverRefreshTimer = 0;
+let lampTrackOffsets = [];
 
 const clamp = (value, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -32,6 +38,12 @@ function measure() {
   transitionDistance = window.innerHeight;
   horizontal.style.height = `${transitionDistance + distance + window.innerHeight}px`;
   horizontalStart = horizontal.offsetTop;
+  lampTrackOffsets = lamps.map((lamp) => {
+    const focusX = Number(lamp.dataset.focusX || 0.5);
+    const lampPosition = lamp.offsetLeft + lamp.offsetWidth * focusX;
+
+    return clamp(lampPosition - window.innerWidth / 2, 0, distance);
+  });
 }
 
 function getContainedImageGeometry(rect, mask, translateY = 0) {
@@ -206,7 +218,7 @@ async function prepareAlphaMasks() {
   const lampImages = lamps.map((lamp) =>
     lamp.querySelector(".lamp__image--off"),
   );
-  const images = [...lampImages, ...walkingImages].filter(Boolean);
+  const images = [...lampImages, ...calloutImages, ...walkingImages].filter(Boolean);
 
   await Promise.all(
     images.map(async (image) => {
@@ -219,7 +231,93 @@ async function prepareAlphaMasks() {
     }),
   );
 
+  positionCallouts();
   render();
+}
+
+function positionCallouts() {
+  const baseCalloutWidth = clamp(window.innerHeight * 0.25, 170, 260);
+  const visibleCalloutWidth = baseCalloutWidth * 1.5;
+  const referenceLamp = document.querySelector(".lamp--4");
+  const referenceLampImage = referenceLamp?.querySelector(".lamp__image--off");
+  const referenceCalloutImage = referenceLamp?.querySelector(
+    ".lamp__callout-image",
+  );
+  const referenceLampMask = imageMasks.get(referenceLampImage);
+  const referenceCalloutMask = imageMasks.get(referenceCalloutImage);
+  let alignedCalloutTop = null;
+
+  if (referenceLampImage && referenceLampMask && referenceCalloutMask) {
+    const referenceLampBounds = getColoredScreenBounds(
+      getContainedImageGeometry(
+        referenceLampImage.getBoundingClientRect(),
+        referenceLampMask,
+      ),
+      referenceLampMask,
+    );
+    const referenceVisibleWidth =
+      referenceCalloutMask.bounds.right -
+      referenceCalloutMask.bounds.left +
+      1;
+    const referenceVisibleHeight =
+      referenceCalloutMask.bounds.bottom -
+      referenceCalloutMask.bounds.top +
+      1;
+    const referenceScale = baseCalloutWidth / referenceVisibleWidth;
+
+    alignedCalloutTop =
+      referenceLampBounds.top - referenceVisibleHeight * referenceScale * 0.46;
+  }
+
+  lamps.forEach((lamp) => {
+    const lampImage = lamp.querySelector(".lamp__image--off");
+    const callout = lamp.querySelector(".lamp__callout");
+    const lampMask = imageMasks.get(lampImage);
+
+    if (!lampImage || !callout || !lampMask) return;
+
+    const lampRect = lamp.getBoundingClientRect();
+    const lampBounds = getColoredScreenBounds(
+      getContainedImageGeometry(lampImage.getBoundingClientRect(), lampMask),
+      lampMask,
+    );
+
+    callout.style.left = `${lampBounds.left - lampRect.left}px`;
+    callout.style.top = `${
+      alignedCalloutTop === null
+        ? lampBounds.top - lampRect.top
+        : alignedCalloutTop - lampRect.top
+    }px`;
+
+    const calloutImage = callout.querySelector(".lamp__callout-image");
+    const calloutMask = imageMasks.get(calloutImage);
+
+    if (calloutImage && calloutMask) {
+      const visibleWidth = calloutMask.bounds.right - calloutMask.bounds.left + 1;
+      const visibleHeight = calloutMask.bounds.bottom - calloutMask.bounds.top + 1;
+      const imageScale = visibleCalloutWidth / visibleWidth;
+
+      callout.style.width = `${visibleCalloutWidth}px`;
+      callout.style.height = `${visibleHeight * imageScale}px`;
+      calloutImage.style.width = `${calloutMask.width * imageScale}px`;
+      calloutImage.style.height = `${calloutMask.height * imageScale}px`;
+      calloutImage.style.left = `${-calloutMask.bounds.left * imageScale}px`;
+      calloutImage.style.top = `${-calloutMask.bounds.top * imageScale}px`;
+    }
+
+    callout.classList.add("is-positioned");
+  });
+}
+
+function openLampDetail(lamp, url) {
+  if (!lamp || !url || isNavigatingToDetail) return;
+
+  isNavigatingToDetail = true;
+  lamp.classList.add("is-selected");
+
+  window.setTimeout(() => {
+    window.location.href = url;
+  }, 280);
 }
 
 function render() {
@@ -270,7 +368,6 @@ function render() {
     image.classList.toggle("is-active", image === activeImages[frameIndex]);
   });
 
-  updateAlphaHover();
   ticking = false;
 }
 
@@ -281,10 +378,18 @@ function requestRender() {
 }
 
 function getLampTrackOffset(lamp) {
-  const focusX = Number(lamp.dataset.focusX || 0.5);
-  const lampPosition = lamp.offsetLeft + lamp.offsetWidth * focusX;
+  const lampIndex = lamps.indexOf(lamp);
 
-  return clamp(lampPosition - window.innerWidth / 2, 0, distance);
+  if (lampIndex >= 0 && Number.isFinite(lampTrackOffsets[lampIndex])) {
+    return lampTrackOffsets[lampIndex];
+  }
+
+  const focusX = Number(lamp.dataset.focusX || 0.5);
+  return clamp(
+    lamp.offsetLeft + lamp.offsetWidth * focusX - window.innerWidth / 2,
+    0,
+    distance,
+  );
 }
 
 function updateNavigation(localScroll, trackOffset) {
@@ -325,6 +430,66 @@ function updateNavigation(localScroll, trackOffset) {
   });
 }
 
+function cancelNavigationScroll() {
+  if (!navigationFrame) return;
+
+  cancelAnimationFrame(navigationFrame);
+  navigationFrame = 0;
+}
+
+function easeInOutCubic(progress) {
+  return progress < 0.5
+    ? 4 * progress ** 3
+    : 1 - (-2 * progress + 2) ** 3 / 2;
+}
+
+function animateScrollTo(targetScroll, behavior = "smooth") {
+  cancelNavigationScroll();
+
+  const startScroll = window.scrollY;
+  const scrollDistance = targetScroll - startScroll;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (
+    behavior === "auto" ||
+    prefersReducedMotion ||
+    Math.abs(scrollDistance) < 1
+  ) {
+    window.scrollTo({ top: targetScroll, behavior: "auto" });
+    updateAlphaHover();
+    return;
+  }
+
+  const duration = clamp(
+    450 + Math.abs(scrollDistance) * 0.025,
+    500,
+    900,
+  );
+  const startedAt = performance.now();
+
+  function animateFrame(currentTime) {
+    const progress = clamp((currentTime - startedAt) / duration);
+    const easedProgress = easeInOutCubic(progress);
+
+    window.scrollTo({
+      top: startScroll + scrollDistance * easedProgress,
+      behavior: "auto",
+    });
+
+    if (progress < 1) {
+      navigationFrame = requestAnimationFrame(animateFrame);
+      return;
+    }
+
+    navigationFrame = 0;
+    updateAlphaHover();
+  }
+
+  navigationFrame = requestAnimationFrame(animateFrame);
+}
+
 function scrollToLamp(lampIndex, behavior = "smooth") {
   const lamp = lamps[lampIndex - 1];
   if (!lamp) return;
@@ -335,16 +500,38 @@ function scrollToLamp(lampIndex, behavior = "smooth") {
   const targetScroll =
     horizontalStart + transitionDistance + centeredTrackOffset;
 
-  window.scrollTo({ top: targetScroll, behavior });
+  animateScrollTo(targetScroll, behavior);
 }
 
 topButton.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  animateScrollTo(0);
 });
 
 lampNavButtons.forEach((button) => {
   button.addEventListener("click", () => {
     scrollToLamp(Number(button.dataset.lampIndex));
+  });
+});
+
+callouts.forEach((callout) => {
+  const lamp = callout.closest(".lamp");
+  if (!lamp) return;
+
+  callout.addEventListener("pointerenter", () => {
+    lamp.classList.add("is-callout-hovered");
+  });
+
+  callout.addEventListener("pointerleave", () => {
+    lamp.classList.remove("is-callout-hovered");
+  });
+});
+
+lamps.forEach((lamp) => {
+  lamp.addEventListener("click", (event) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+    event.preventDefault();
+    openLampDetail(lamp, lamp.getAttribute("href"));
   });
 });
 
@@ -358,7 +545,7 @@ window.addEventListener("click", (event) => {
   );
 
   if (clickedLamp) {
-    window.location.href = clickedLamp.dataset.detailUrl;
+    openLampDetail(clickedLamp, clickedLamp.dataset.detailUrl);
   }
 });
 
@@ -378,9 +565,36 @@ document.documentElement.addEventListener("mouseleave", () => {
   updateAlphaHover();
 });
 
-window.addEventListener("scroll", requestRender, { passive: true });
+window.addEventListener(
+  "scroll",
+  () => {
+    requestRender();
+    window.clearTimeout(hoverRefreshTimer);
+    hoverRefreshTimer = window.setTimeout(updateAlphaHover, 80);
+  },
+  { passive: true },
+);
+window.addEventListener("wheel", cancelNavigationScroll, { passive: true });
+window.addEventListener("touchstart", cancelNavigationScroll, { passive: true });
+window.addEventListener("keydown", (event) => {
+  if (
+    [
+      "ArrowUp",
+      "ArrowDown",
+      "PageUp",
+      "PageDown",
+      "Home",
+      "End",
+      " ",
+    ].includes(event.key)
+  ) {
+    cancelNavigationScroll();
+  }
+});
 window.addEventListener("resize", () => {
+  cancelNavigationScroll();
   measure();
+  positionCallouts();
   render();
 });
 window.addEventListener("load", () => {
