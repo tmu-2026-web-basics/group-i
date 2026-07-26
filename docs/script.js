@@ -269,14 +269,10 @@ function render() {
     ? frontImages[frameIndex]
     : phoneImages[frameIndex];
 
-  walker.classList.toggle("has-passed-intro", hasPassedIntro);
-
   const currentWalkerBounds = getWalkerScreenBounds(currentWalkingImage);
   const shouldLookUp = lampImageTrackBounds.some((lampBounds) =>
     isWithinLampRange(currentWalkerBounds, lampBounds, trackOffset),
   );
-
-  walker.classList.toggle("is-looking-up", shouldLookUp);
 
   const activeImages = shouldLookUp
     ? upImages

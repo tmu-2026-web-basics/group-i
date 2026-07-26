@@ -474,13 +474,9 @@ body.is-preparing .corner-nav {
   margin-top: 1.35em;
 }
 
-.scene__keep {
-  white-space: nowrap;
-}
-
 .scene--finish {
   top: 31cqh;
-  left: 1930cqh;
+  left: 1900cqh;
   width: 53cqh;
   font-size: clamp(13px, 1.9cqh, 20px);
   font-weight: 900;
@@ -1311,7 +1307,6 @@ body.is-preparing .corner-nav {
   width: clamp(165px, 26cqh, 270px);
   height: 41cqh;
   filter: drop-shadow(0 10px 8px rgba(93, 66, 60, 0.12));
-  pointer-events: none;
   transform: translate3d(0, 0, 0);
   transition: transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;

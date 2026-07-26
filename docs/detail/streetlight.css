@@ -1,0 +1,487 @@
+@font-face {
+  font-family: "Kaisei Decol";
+  src: url("../font/KaiseiDecol-Bold-subset.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --mint: #86ddcf;
+  --cream: #fffdf1;
+  --brown1: #5d423c;
+  --brown2: #61514a;
+  --yellow: #e8cd66;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--brown1);
+  background: var(--brown2);
+  font-family: "Zen Kaku Gothic New", sans-serif;
+}
+
+body.detail-is-loading {
+  overflow: hidden;
+}
+
+body::before,
+body::after {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+body::before {
+  z-index: 10000;
+  inset: 0;
+  background-color: var(--mint);
+  background-image:
+    url("../images/logo/icon-top.webp"),
+    url("../images/walking/walking_front/walking_front_01.webp");
+  background-repeat: no-repeat;
+  background-position:
+    left 32px top 28px,
+    right 190px bottom 0;
+  background-size:
+    clamp(150px, 16vw, 210px) auto,
+    clamp(130px, 16vw, 190px) auto;
+  content: "";
+}
+
+body::after {
+  z-index: 10001;
+  right: clamp(28px, 4vw, 64px);
+  bottom: clamp(34px, 6vh, 64px);
+  color: var(--brown1);
+  content: "読み込み中…";
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+body.detail-is-loading::before,
+body.detail-is-loading::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.dot-field {
+  position: relative;
+  padding: clamp(24px, 4vw, 64px) clamp(16px, 4vw, 64px) 0;
+  background: var(--mint);
+}
+
+.halftone {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--mint);
+  pointer-events: none;
+}
+
+.detail-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 980px);
+  margin: 0 auto;
+  overflow: clip;
+  background: var(--cream);
+  border: 6px solid var(--brown1);
+  border-radius: 58px;
+}
+
+.detail-header {
+  display: flex;
+  min-height: 130px;
+  padding: 32px clamp(30px, 6vw, 72px);
+  align-items: flex-start;
+}
+
+.detail-header__home {
+  width: clamp(190px, 30vw, 330px);
+}
+
+.detail-hero {
+  display: grid;
+  min-height: 680px;
+  padding: 70px clamp(42px, 8vw, 100px) 100px;
+  grid-template-columns: minmax(0, 4fr) minmax(120px, 1fr);
+  align-items: center;
+  gap: clamp(20px, 5vw, 60px);
+}
+
+.detail-hero h1 {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  aspect-ratio: 2058 / 650;
+}
+
+.detail-hero h1 img {
+  position: absolute;
+  top: -220.3%;
+  left: -37.8%;
+  width: 175.66%;
+  max-width: none;
+}
+
+.detail-hero h1.detail-hero__title--contained {
+  display: grid;
+  min-height: 220px;
+  overflow: visible;
+  aspect-ratio: auto;
+  place-items: center;
+}
+
+.detail-hero h1.detail-hero__title--contained img {
+  position: static;
+  width: 100%;
+  height: 220px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+body[data-streetlight="2"] .detail-hero__title--contained img {
+  transform: scale(1.7);
+  transform-origin: center;
+}
+
+.detail-hero__lamp {
+  display: grid;
+  overflow: visible;
+  width: 100%;
+  aspect-ratio: 404 / 1309;
+  place-items: center;
+}
+
+.detail-hero__lamp img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  transform: scale(1.5);
+  transform-origin: center;
+}
+
+.detail-content {
+  padding: 0 clamp(44px, 8vw, 110px) 110px;
+}
+
+.story-sticky {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr);
+  align-items: start;
+  gap: clamp(42px, 7vw, 86px);
+}
+
+.street-photo {
+  position: sticky;
+  top: calc(50vh - var(--street-photo-half-height, 260px));
+  width: min(100%, 390px);
+  margin: 0 auto;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  border: 3px solid var(--brown1);
+  border-radius: 34px;
+  background: #d9d9d9;
+  filter: drop-shadow(10px 10px 0 var(--brown1));
+}
+
+.street-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.story__text {
+  width: min(100%, 390px);
+  margin: 0 auto;
+  text-align: left;
+}
+
+.story {
+  display: flex;
+  align-items: center;
+}
+
+.story--where {
+  min-height: 560px;
+}
+
+.story h2,
+.location h2 {
+  margin: 0 0 28px;
+  font-family: "Kaisei Decol", serif;
+  font-size: clamp(25px, 3.1vw, 38px);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.story p,
+.location address {
+  margin: 0;
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 2.2;
+  letter-spacing: 0.04em;
+}
+
+.story a {
+  color: inherit;
+  text-decoration-color: currentColor;
+  text-underline-offset: 0.18em;
+}
+
+.story--comment {
+  min-height: 680px;
+}
+
+.location {
+  display: grid;
+  min-height: 650px;
+  grid-template-columns: minmax(280px, 1.15fr) minmax(240px, 0.85fr);
+  align-items: center;
+  gap: clamp(42px, 7vw, 86px);
+}
+
+.map-frame {
+  width: min(100%, 450px);
+  margin: 0 auto;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 3px solid var(--brown1);
+  border-radius: 30px;
+  background: #ddd;
+  filter: drop-shadow(10px 10px 0 var(--brown1));
+}
+
+.map-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.location__text {
+  width: min(100%, 340px);
+  margin: 0 auto;
+  text-align: left;
+}
+
+.other-lights {
+  --other-gap: clamp(18px, 4vw, 48px);
+  --other-size: clamp(100px, 16vw, 160px);
+
+  margin-inline: calc(clamp(44px, 8vw, 110px) * -1);
+  padding: 40px 0 50px;
+  overflow: hidden;
+}
+
+.other-lights > p {
+  margin: 0 0 clamp(20px, 3vw, 32px);
+  padding-inline: clamp(44px, 8vw, 110px);
+  font-family: "Zen Maru Gothic", sans-serif;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+}
+
+.other-lights__viewport {
+  overflow: hidden;
+  padding-block: 8px;
+}
+
+.other-lights__track {
+  display: flex;
+  width: max-content;
+  gap: var(--other-gap);
+  animation: other-lights-loop 24s linear infinite;
+  will-change: transform;
+}
+
+.other-lights__set {
+  display: flex;
+  flex: none;
+  gap: var(--other-gap);
+}
+
+.other-lights__set a {
+  position: relative;
+  display: grid;
+  flex: 0 0 var(--other-size);
+  width: var(--other-size);
+  height: var(--other-size);
+  aspect-ratio: 1;
+  place-items: center;
+  color: var(--brown1);
+  overflow: hidden;
+  background: var(--cream);
+  border: 0;
+  border-radius: 50%;
+  clip-path: circle(50% at 50% 50%);
+  text-decoration: none;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.other-lights__set a::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border: 3px solid var(--brown1);
+  border-radius: 50%;
+  content: "";
+  pointer-events: none;
+}
+
+.other-lights__set img {
+  width: 88%;
+  height: 90%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: none;
+}
+
+.other-lights__set a[data-streetlight="01"] img {
+  position: relative;
+  top: -6%;
+  width: 74%;
+  height: 74%;
+  object-position: center bottom;
+  transform: none;
+}
+
+.other-lights__set a[data-streetlight="03"] img {
+  position: relative;
+  top: 32%;
+  transform: scale(1.65);
+  transform-origin: center;
+}
+
+.other-lights__set a:hover,
+.other-lights__set a:focus-visible {
+  background: var(--yellow);
+  transform: translateY(-5px);
+}
+
+@keyframes other-lights-loop {
+  to {
+    transform: translateX(calc(-50% - var(--other-gap) / 2));
+  }
+}
+
+.detail-bottom {
+  display: flex;
+  min-height: 470px;
+  padding: 42px clamp(34px, 10vw, 150px) 70px;
+  align-items: center;
+  justify-content: flex-end;
+  background: var(--brown2);
+}
+
+.detail-bottom__credit {
+  display: grid;
+  width: clamp(180px, 25vw, 320px);
+  justify-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.detail-bottom__home {
+  display: block;
+  width: 100%;
+  transition: opacity 180ms ease;
+}
+
+.detail-bottom__home:hover,
+.detail-bottom__home:focus-visible {
+  opacity: 0.72;
+}
+
+.detail-bottom__home:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: 8px;
+}
+
+.detail-bottom__home img {
+  width: 100%;
+}
+
+.detail-bottom small {
+  color: var(--cream);
+  font-size: clamp(13px, 1.5vw, 18px);
+  white-space: nowrap;
+}
+
+.street-return {
+  position: fixed;
+  z-index: 100;
+  right: 22px;
+  bottom: 22px;
+  display: grid;
+  width: 88px;
+  height: 88px;
+  place-content: center;
+  color: var(--cream);
+  background: var(--brown1);
+  border: 3px solid var(--cream);
+  border-radius: 50%;
+  box-shadow: 0 8px 22px rgba(45, 29, 25, 0.24);
+  font-family: "Zen Maru Gothic", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+}
+
+.street-return span {
+  display: block;
+}
+
+.street-return span:first-child {
+  font-size: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .other-lights__track {
+    animation: none;
+  }
+
+  .other-lights__viewport {
+    overflow-x: auto;
+  }
+
+  .other-lights__set[aria-hidden="true"] {
+    display: none;
+  }
+
+  .other-lights__set a {
+    transition: none;
+  }
+}
