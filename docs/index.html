@@ -15,7 +15,23 @@
     <script src="script.js" defer></script>
   </head>
   <body id="page-top" class="is-preparing" aria-busy="true">
-    <div class="page-loader" role="status" aria-live="polite">画像を読み込み中…</div>
+    <div class="page-loader" role="status" aria-live="polite">
+      <div class="page-loader__canvas">
+      <img
+        class="page-loader__logo"
+        src="images/logo/icon-top.webp"
+        alt="上を向いて歩こう"
+      />
+      <div class="page-loader__status">
+        <img
+          class="page-loader__walker"
+          src="images/walking/walking_front/walking_front_01.webp"
+          alt=""
+        />
+        <span>読み込み中…</span>
+      </div>
+      </div>
+    </div>
     <section class="opening" aria-labelledby="opening-title">
       <div class="opening__sticky">
         <img class="opening__image" src="images/top/top_01.webp" alt="街灯のそばを歩きながらスマートフォンを見る人" />
@@ -28,10 +44,19 @@
 
     <main class="horizontal" aria-label="街灯をめぐる横スクロールコンテンツ">
       <div class="horizontal__sticky">
-        <a class="walking-logo" href="#page-top" aria-label="トップ画面へ戻る">
-          <img src="images/logo/icon-top.webp" alt="上を向いて歩こう" />
-        </a>
+        <div class="horizontal__canvas">
+      <img
+        class="horizontal__connector"
+        src="images/top/connecter.webp"
+        alt=""
+        aria-hidden="true"
+      />
 
+      <a class="walking-logo" href="#page-top" aria-label="トップ画面へ戻る">
+        <img src="images/logo/icon-top.webp" alt="上を向いて歩こう" />
+      </a>
+
+          <div class="horizontal__panel">
         <div class="track" id="track">
           <section class="journey">
             <div class="sky"></div><div class="ground"></div>
@@ -129,6 +154,11 @@
               <p>このサイトをきっかけに、歩くときに少しだけ<br />上を向く習慣が生まれたら嬉しいです。</p>
               <p>いつもの道にも、まだ知らない発見が<br />待っているかもしれません。</p>
             </section>
+
+            <div class="finish-credit">
+              <img src="images/logo/icon-white.webp" alt="上を向いて歩こう" />
+              <small>©2026 Group-i</small>
+            </div>
           </section>
         </div>
 
@@ -202,20 +232,22 @@
           <img class="walker__pose walker__pose--up" src="images/walking/walking_up/walking_up_03.webp" alt="" />
           <img class="walker__pose walker__pose--up" src="images/walking/walking_up/walking_up_04.webp" alt="" />
         </div>
+          </div>
+
+          <nav class="corner-nav" aria-label="ページ内ナビゲーション">
+            <button class="corner-nav__top is-active" type="button" id="topButton" aria-current="location">Top</button>
+            <span class="corner-nav__line">
+              <button class="corner-nav__dot" type="button" data-lamp-index="1" aria-label="街灯1へ移動"></button>
+              <button class="corner-nav__dot" type="button" data-lamp-index="2" aria-label="街灯2へ移動"></button>
+              <button class="corner-nav__dot" type="button" data-lamp-index="3" aria-label="街灯3へ移動"></button>
+              <button class="corner-nav__dot" type="button" data-lamp-index="4" aria-label="街灯4へ移動"></button>
+              <button class="corner-nav__dot" type="button" data-lamp-index="5" aria-label="街灯5へ移動"></button>
+              <button class="corner-nav__dot" type="button" data-lamp-index="6" aria-label="街灯6へ移動"></button>
+              <button class="corner-nav__dot" type="button" data-lamp-index="7" aria-label="街灯7へ移動"></button>
+            </span>
+          </nav>
+        </div>
       </div>
     </main>
-
-    <nav class="corner-nav" aria-label="ページ内ナビゲーション">
-      <button class="corner-nav__top is-active" type="button" id="topButton" aria-current="location">Top</button>
-      <span class="corner-nav__line">
-        <button class="corner-nav__dot" type="button" data-lamp-index="1" aria-label="街灯1へ移動"></button>
-        <button class="corner-nav__dot" type="button" data-lamp-index="2" aria-label="街灯2へ移動"></button>
-        <button class="corner-nav__dot" type="button" data-lamp-index="3" aria-label="街灯3へ移動"></button>
-        <button class="corner-nav__dot" type="button" data-lamp-index="4" aria-label="街灯4へ移動"></button>
-        <button class="corner-nav__dot" type="button" data-lamp-index="5" aria-label="街灯5へ移動"></button>
-        <button class="corner-nav__dot" type="button" data-lamp-index="6" aria-label="街灯6へ移動"></button>
-        <button class="corner-nav__dot" type="button" data-lamp-index="7" aria-label="街灯7へ移動"></button>
-      </span>
-    </nav>
   </body>
 </html>

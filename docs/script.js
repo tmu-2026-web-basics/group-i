@@ -12,10 +12,15 @@ const topButton = document.querySelector("#topButton");
 const lampNavButtons = [...document.querySelectorAll("[data-lamp-index]")];
 const WALK_FRAME_COUNT = 4;
 const WALK_CYCLE_COUNT = 9;
+const CANVAS_WIDTH = 1440;
+const CANVAS_HEIGHT = 900;
 const BACKGROUND_IMAGE_URLS = ["images/top/building.webp"];
 
 let distance = 1;
+let trackDistance = 1;
 let transitionDistance = 1;
+let canvasScale = 1;
+let canvasWidth = CANVAS_WIDTH;
 let horizontalStart = 0;
 let previousProgress = 0;
 let walkingBackward = false;
@@ -36,6 +41,15 @@ walker.classList.remove("is-walking-backward");
 const clamp = (value, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
 
+function updateCanvasScale() {
+  canvasScale = window.innerHeight / CANVAS_HEIGHT;
+  canvasWidth = window.innerWidth / canvasScale;
+  root.style.setProperty("--canvas-scale", canvasScale.toFixed(6));
+  root.style.setProperty("--canvas-width", `${canvasWidth.toFixed(2)}px`);
+}
+
+updateCanvasScale();
+
 function getContainedImageBox(image) {
   const boxWidth = image.offsetWidth;
   const boxHeight = image.offsetHeight;
@@ -55,15 +69,17 @@ function getContainedImageBox(image) {
 }
 
 function measure() {
-  distance = Math.max(track.scrollWidth - window.innerWidth, 1);
-  transitionDistance = window.innerHeight;
+  updateCanvasScale();
+  trackDistance = Math.max(track.scrollWidth - canvasWidth, 1);
+  distance = trackDistance * canvasScale;
+  transitionDistance = CANVAS_HEIGHT * canvasScale;
   horizontal.style.height = `${transitionDistance + distance + window.innerHeight}px`;
   horizontalStart = horizontal.offsetTop;
   lampTrackOffsets = lamps.map((lamp) => {
     const focusX = Number(lamp.dataset.focusX || 0.5);
     const lampPosition = lamp.offsetLeft + lamp.offsetWidth * focusX;
 
-    return clamp(lampPosition - window.innerWidth / 2, 0, distance);
+    return clamp(lampPosition - canvasWidth / 2, 0, trackDistance);
   });
 
   introTrackRight = introScene.offsetLeft + introScene.offsetWidth;
@@ -86,7 +102,7 @@ function measure() {
 }
 
 function positionCallouts() {
-  const baseCalloutWidth = clamp(window.innerHeight * 0.25, 170, 260);
+  const baseCalloutWidth = clamp(CANVAS_HEIGHT * 0.25, 170, 260);
   const visibleCalloutWidth = baseCalloutWidth * 1.5;
   const referenceLamp = document.querySelector(".lamp--4");
   const referenceLampImage = referenceLamp?.querySelector(".lamp__image--off");
@@ -153,7 +169,7 @@ function getWalkerScreenBounds(walkingImage) {
   );
   const imageWidth = naturalWidth * scale;
   const walkerLeft = walkingBackward
-    ? window.innerWidth - walkerMetrics.left - walkerMetrics.width
+    ? canvasWidth - walkerMetrics.left - walkerMetrics.width
     : walkerMetrics.left;
   const left = walkerLeft + (walkerMetrics.width - imageWidth) / 2;
 
@@ -186,11 +202,11 @@ function render() {
   const localScroll = Math.max(window.scrollY - horizontalStart, 0);
   const reveal = clamp(localScroll / transitionDistance);
   const progress = clamp((localScroll - transitionDistance) / distance);
-  const trackOffset = progress * distance;
+  const trackOffset = progress * trackDistance;
   const step = Math.floor(progress * WALK_FRAME_COUNT * WALK_CYCLE_COUNT);
   const frameIndex = step % WALK_FRAME_COUNT;
   const bob = Math.sin(progress * Math.PI * 18) * 4;
-  const movement = (progress - previousProgress) * distance;
+  const movement = (progress - previousProgress) * trackDistance;
 
   if (directionInputEnabled && Math.abs(movement) >= 0.5) {
     walkingBackward = movement < 0;
@@ -199,7 +215,10 @@ function render() {
 
   root.style.setProperty(
     "--panel-x",
-    `${((1 - reveal) * window.innerWidth).toFixed(2)}px`,
+    `${
+      ((1 - reveal) *
+        (canvasWidth + CANVAS_HEIGHT * 0.5)).toFixed(2)
+    }px`,
   );
   root.style.setProperty("--track-x", `${(-trackOffset).toFixed(2)}px`);
   root.style.setProperty("--walker-bob", `${bob.toFixed(2)}px`);
@@ -257,9 +276,9 @@ function getLampTrackOffset(lamp) {
 
   const focusX = Number(lamp.dataset.focusX || 0.5);
   return clamp(
-    lamp.offsetLeft + lamp.offsetWidth * focusX - window.innerWidth / 2,
+    lamp.offsetLeft + lamp.offsetWidth * focusX - canvasWidth / 2,
     0,
-    distance,
+    trackDistance,
   );
 }
 
@@ -368,7 +387,7 @@ function scrollToLamp(lampIndex, behavior = "smooth") {
 
   const centeredTrackOffset = getLampTrackOffset(lamp);
   const targetScroll =
-    horizontalStart + transitionDistance + centeredTrackOffset;
+    horizontalStart + transitionDistance + centeredTrackOffset * canvasScale;
 
   animateScrollTo(targetScroll, behavior);
 }
@@ -442,9 +461,29 @@ window.addEventListener("keydown", (event) => {
   }
 });
 window.addEventListener("resize", () => {
-  if (!pageReady) return;
+  if (!pageReady) {
+    updateCanvasScale();
+    return;
+  }
+
+  const previousLocalScroll = Math.max(window.scrollY - horizontalStart, 0);
+  const wasInReveal = previousLocalScroll < transitionDistance;
+  const previousReveal = clamp(previousLocalScroll / transitionDistance);
+  const previousTrackProgress = clamp(
+    (previousLocalScroll - transitionDistance) / distance,
+  );
+
   cancelNavigationScroll();
   measure();
+
+  const resizedScroll =
+    wasInReveal
+      ? horizontalStart + previousReveal * transitionDistance
+      : horizontalStart +
+        transitionDistance +
+        previousTrackProgress * distance;
+
+  window.scrollTo({ top: resizedScroll, behavior: "auto" });
   positionCallouts();
   render();
 });
@@ -476,16 +515,22 @@ async function initializePage() {
   positionCallouts();
   pageReady = true;
   render();
-  document.body.classList.remove("is-preparing");
-  document.body.removeAttribute("aria-busy");
 
   const requestedLamp = Number(
     new URLSearchParams(window.location.search).get("streetlight"),
   );
 
   if (requestedLamp >= 1 && requestedLamp <= lamps.length) {
-    requestAnimationFrame(() => scrollToLamp(requestedLamp, "auto"));
+    scrollToLamp(requestedLamp, "auto");
+    render();
   }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.body.classList.remove("is-preparing");
+      document.body.removeAttribute("aria-busy");
+    });
+  });
 }
 
 initializePage();
