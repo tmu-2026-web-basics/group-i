@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="../streetlight.css" />
     <script src="../streetlight.js" defer></script>
   </head>
-  <body id="detail-top" data-streetlight="6">
+  <body id="detail-top" class="detail-is-loading" data-streetlight="6" aria-busy="true">
     <section class="dot-field">
       <canvas class="halftone" aria-hidden="true"></canvas>
       <main class="detail-card">
@@ -65,7 +65,7 @@
         </div>
       </main>
     </section>
-    <footer class="detail-bottom"><img src="../../images/logo/icon-white.webp" alt="上を向いて歩こう" /><small>© group-i</small></footer>
+    <footer class="detail-bottom"><a class="detail-bottom__home" href="../../index.html" aria-label="トップページへ戻る"><img src="../../images/logo/icon-white.webp" alt="上を向いて歩こう" /></a><small>© group-i</small></footer>
     <a class="street-return" href="../../index.html?streetlight=6" aria-label="トップページの街灯6の場所へ戻る"><span aria-hidden="true">←</span><span>戻る</span></a>
   </body>
 </html>

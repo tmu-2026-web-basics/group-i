@@ -149,6 +149,23 @@ body.is-preparing .corner-nav {
   object-fit: cover;
   object-position: center center;
   transform: none;
+  transition: opacity 0.8s ease;
+}
+
+.opening__image--initial {
+  opacity: 1;
+}
+
+.opening__image--later {
+  opacity: 0;
+}
+
+.opening.is-later-image .opening__image--initial {
+  opacity: 0;
+}
+
+.opening.is-later-image .opening__image--later {
+  opacity: 1;
 }
 
 .opening__sticky::after {
@@ -446,7 +463,7 @@ body.is-preparing .corner-nav {
 .scene--intro {
   top: 30cqh;
   left: 102.4cqh;
-  width: min(57.6cqh, 70cqh);
+  width: 64cqh;
   font-size: clamp(13px, 1.9cqh, 20px);
   font-weight: 900;
   line-height: 2;
@@ -455,6 +472,10 @@ body.is-preparing .corner-nav {
 .scene--intro p + p,
 .scene--finish p + p {
   margin-top: 1.35em;
+}
+
+.scene__keep {
+  white-space: nowrap;
 }
 
 .scene--finish {

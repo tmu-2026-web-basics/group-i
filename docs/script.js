@@ -1,4 +1,5 @@
 const root = document.documentElement;
+const opening = document.querySelector(".opening");
 const horizontal = document.querySelector(".horizontal");
 const track = document.querySelector("#track");
 const walker = document.querySelector("#walker");
@@ -14,6 +15,8 @@ const WALK_FRAME_COUNT = 4;
 const WALK_CYCLE_COUNT = 9;
 const CANVAS_WIDTH = 1440;
 const CANVAS_HEIGHT = 900;
+const SITE_OPENED_AT_KEY = "group-i-site-opened-at";
+const TOP_IMAGE_SWITCH_DELAY = 30000;
 const BACKGROUND_IMAGE_URLS = ["images/top/building.webp"];
 
 let distance = 1;
@@ -49,6 +52,36 @@ function updateCanvasScale() {
 }
 
 updateCanvasScale();
+
+function getSiteOpenedAt() {
+  try {
+    const savedTime = Number(sessionStorage.getItem(SITE_OPENED_AT_KEY));
+
+    if (Number.isFinite(savedTime) && savedTime > 0) {
+      return savedTime;
+    }
+
+    const openedAt = Date.now();
+    sessionStorage.setItem(SITE_OPENED_AT_KEY, String(openedAt));
+    return openedAt;
+  } catch {
+    return Date.now();
+  }
+}
+
+function scheduleOpeningImageChange() {
+  const elapsedTime = Date.now() - getSiteOpenedAt();
+  const remainingTime = Math.max(TOP_IMAGE_SWITCH_DELAY - elapsedTime, 0);
+
+  if (remainingTime === 0) {
+    opening?.classList.add("is-later-image");
+    return;
+  }
+
+  window.setTimeout(() => {
+    opening?.classList.add("is-later-image");
+  }, remainingTime);
+}
 
 function getContainedImageBox(image) {
   const boxWidth = image.offsetWidth;
@@ -533,4 +566,5 @@ async function initializePage() {
   });
 }
 
+scheduleOpeningImageChange();
 initializePage();

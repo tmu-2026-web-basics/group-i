@@ -1,4 +1,5 @@
 const halftone = document.querySelector(".halftone");
+const SITE_OPENED_AT_KEY = "group-i-site-opened-at";
 const dotField = document.querySelector(".dot-field");
 const locationSection = document.querySelector(".location");
 const streetPhoto = document.querySelector(".street-photo");
@@ -15,6 +16,14 @@ let otherLightsPointerPosition = null;
 
 const clamp = (value, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
+
+try {
+  if (!sessionStorage.getItem(SITE_OPENED_AT_KEY)) {
+    sessionStorage.setItem(SITE_OPENED_AT_KEY, String(Date.now()));
+  }
+} catch {
+  // sessionStorageが使えない環境では、トップページ内のタイマーへフォールバックする。
+}
 
 function createOtherLightsSet(streetlightIds, isDuplicate = false) {
   const set = document.createElement("div");
@@ -225,8 +234,46 @@ function stopOtherLightsWheelControl() {
   otherLightsPointerPosition = null;
 }
 
-renderOtherLights();
-window.addEventListener("load", drawHalftone);
+function waitForImage(image) {
+  if (typeof image.decode === "function") {
+    return image.decode();
+  }
+
+  if (image.complete) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    image.addEventListener("load", resolve, { once: true });
+    image.addEventListener("error", resolve, { once: true });
+  });
+}
+
+async function initializeDetailPage() {
+  renderOtherLights();
+
+  const criticalImages = [
+    ...document.querySelectorAll(
+      ".detail-header img, .detail-hero img, .street-photo img, .detail-bottom img",
+    ),
+  ];
+
+  await Promise.allSettled(criticalImages.map(waitForImage));
+
+  if (document.fonts?.ready) {
+    await document.fonts.ready;
+  }
+
+  drawHalftone();
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.body.classList.remove("detail-is-loading");
+      document.body.removeAttribute("aria-busy");
+    });
+  });
+}
+
 window.addEventListener("resize", requestHalftoneDraw);
 otherLights.addEventListener("pointerenter", startOtherLightsPointerCheck);
 otherLights.addEventListener("pointermove", enableOtherLightsWheelControl);
@@ -234,3 +281,5 @@ otherLights.addEventListener("pointerleave", stopOtherLightsWheelControl);
 otherLights.addEventListener("wheel", accelerateOtherLights, {
   passive: false,
 });
+
+initializeDetailPage();

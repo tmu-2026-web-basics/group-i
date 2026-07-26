@@ -19,7 +19,7 @@
     <script src="../streetlight.js" defer></script>
   </head>
 
-  <body id="detail-top" data-streetlight="4">
+  <body id="detail-top" class="detail-is-loading" data-streetlight="4" aria-busy="true">
     <section class="dot-field">
       <canvas class="halftone" aria-hidden="true"></canvas>
 
@@ -106,7 +106,9 @@
     </section>
 
     <footer class="detail-bottom">
-      <img src="../../images/logo/icon-white.webp" alt="上を向いて歩こう" />
+      <a class="detail-bottom__home" href="../../index.html" aria-label="トップページへ戻る">
+        <img src="../../images/logo/icon-white.webp" alt="上を向いて歩こう" />
+      </a>
       <small>© group-i</small>
     </footer>
 
